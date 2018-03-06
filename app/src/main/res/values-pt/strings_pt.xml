@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ProStudent</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Palavra-passe</string>
+    <string name="action_sign_in">Inicio de sessão</string>
+    <string name="action_register">Registar</string>
+    <string name="action_sign_in_short">Inicio de Sessão</string>
+    <string name="error_invalid_email">Este endereço de email é inváido</string>
+    <string name="error_invalid_password">Esta password é demasiado curta</string>
+    <string name="error_incorrect_password">Esta password está incorreta</string>
+    <string name="error_field_required">Este campo é obrigatório</string>
+    <string name="permission_rationale">"É necessária uma permissão de Contactos para fornecer o preenchimento automático de email."
+    </string>
+</resources>
