@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,6 +27,10 @@ public class Register extends AppCompatActivity {
     private Button confirmBut,cancelBut;
     private FirebaseAuth mAuth;
     private String TAG="Tentativa";
+
+    private ProgressBar registerprogress;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +60,8 @@ public class Register extends AppCompatActivity {
         confirmBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                registerprogress = (ProgressBar) findViewById(R.id.reg_prog);
+
                 String username = usernameText.getText().toString();
                 String email = emailText.getText().toString();
                 String email_confirm = email_confirmText.getText().toString();
@@ -69,33 +76,23 @@ public class Register extends AppCompatActivity {
                         !TextUtils.isEmpty(pass_confirm) && !TextUtils.isEmpty(name) &&
                         !TextUtils.isEmpty(surname))
                 {
-                    Log.d(TAG,"tudo completo");
+                    registerprogress.setVisibility(View.VISIBLE);
                     if(!TextUtils.equals(email,email_confirm))
                     {
                         //emails not match
-                        Log.d(TAG,"emails errados");
 
                     }
                     if(!TextUtils.equals(pass,pass_confirm))
                     {
-                        Log.d(TAG,"pass erradas");
                     }
                     else{
                         if(TextUtils.isEmpty(url))
                         {
                             url="https://www.habermanolya.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png";
-                            Log.d(TAG,"sem url");
-
                         }
-
                         createAccount(email,pass,username,name,surname,url);
-                        Log.d(TAG,"conta criada");
-
                     }
-
                 }
-
-
             }
         });
     }
@@ -140,6 +137,8 @@ public class Register extends AppCompatActivity {
                             mDatabase.child(id).setValue(userdb);
                             Log.d(TAG,"set do user");
                             updateUI(user);
+                            registerprogress.setVisibility(View.INVISIBLE);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());

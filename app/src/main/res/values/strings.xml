@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ProStudent</string>
+    <string name="app_name">ClassTicket</string>
 
     <!-- Strings related to login -->
     <string name="welcome">Welcome to</string>
@@ -14,7 +14,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    
+
     <!--Strings related to new account-->
     <string name="prompt_username">Username</string>
     <string name="prompt_name">Name</string>
@@ -28,10 +28,21 @@
     <string name="select_status_2">Student</string>
     <string name="action_create_account">Create account</string>
     <string name="message_create">Create a new account</string>
-    <string name="status_question">Who are you?</string>
+    <string name="status_question">What are you?</string>
 
     <!-- Strings related to general content-->
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">Confirm</string>
+
+    <!-- Strings related to toolbar-->
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="navigation_header">Navigation Header</string>
+    <string name="title_home">Dashboard</string>
+    <string name="title_activity_home">Home</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 
 </resources>
