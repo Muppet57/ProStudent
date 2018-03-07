@@ -1,6 +1,7 @@
 package com.student.pro.prostudent;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,47 +22,69 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private Button login,register;
+    private String TAG  = "teste",email,pass;
+    private EditText emailText,passText;
+    private ProgressBar loginprogress;
     private FirebaseAuth mAuth;
-    Button login,create;
-    String TAG  = "login",TAG2="UI",email,pass;
-    EditText emailEdit,passEdit;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         mAuth = FirebaseAuth.getInstance();
+
+
+        emailText = findViewById(R.id.email_in);
+        passText = findViewById(R.id.pass_in);
         login = findViewById(R.id.login_but);
+        register = findViewById(R.id.register_but);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                emailEdit = findViewById(R.id.email_in);
-                passEdit = findViewById(R.id.pass_in);
-                email = emailEdit.getText().toString();
-                pass = passEdit.getText().toString();
+
+                email = emailText.getText().toString();
+                pass = passText.getText().toString();
+                loginprogress = (ProgressBar) findViewById(R.id.login_prog);
+
                 boolean cancel = false;
                 View focusView = null;
 
                 // Check for a valid password, if the user entered one.
-                if (TextUtils.isEmpty(pass)) {
-                    passEdit.setError(getString(R.string.error_field_required));
-                    focusView = passEdit;
+                if (!TextUtils.isEmpty(pass) && !TextUtils.isEmpty(email)) {
+
+                    loginprogress.setVisibility(View.VISIBLE);
+
+                    tryLogin(email, pass);
+
+                }
+                if(TextUtils.isEmpty(pass))
+                {
+                    passText.setError(getString(R.string.error_field_required));
+                    focusView = passText;
                     cancel = true;
                 }
-                // Check for a valid email address.
                 if (TextUtils.isEmpty(email)) {
-                    emailEdit.setError(getString(R.string.error_field_required));
-                    focusView = emailEdit;
+                    emailText.setError(getString(R.string.error_field_required));
+                    focusView = emailText;
                     cancel = true;
                 }
                 if (cancel) {
                     // There was an error; don't attempt login and focus the first
                     // form field with an error.
                     focusView.requestFocus();
-                } else {
-                    tryLogin(email, pass);
                 }
+            }
+        });
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this,Register.class);
+                startActivity(intent);
             }
         });
     }
@@ -73,28 +97,7 @@ public class LoginActivity extends AppCompatActivity {
         updateUI(currentUser);
     }
 
-    private void createAccount(String em, String pw)
-    {
-        mAuth.createUserWithEmailAndPassword(em, pw)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
 
-                    }
-                });
-    }
 
     private void tryLogin(String em,String pw)
     {
@@ -114,43 +117,24 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
-
+                        loginprogress.setVisibility(View.INVISIBLE);
                     }
                 });
+
+
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        //alternar ecrã
-        Log.d(TAG2, String.valueOf(currentUser));
+        if(currentUser!=null)
+        {
+            sendtoHome();
+        }
+
+
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
+    private void sendtoHome() {
+        Intent intent = new Intent(LoginActivity.this,Home.class);
+        startActivity(intent);
     }
 }
