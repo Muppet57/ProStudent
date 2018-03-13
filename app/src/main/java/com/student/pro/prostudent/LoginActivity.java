@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this,Register.class);
+                Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(intent);
             }
         });
@@ -134,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendtoHome() {
-        Intent intent = new Intent(LoginActivity.this,Home.class);
+        Intent intent = new Intent(LoginActivity.this,HomeActivity.class);
         startActivity(intent);
     }
 }

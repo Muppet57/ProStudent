@@ -21,7 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-public class Register extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private EditText usernameText,emailText,email_confirmText,passText,pass_confirmText,nameText,surnameText,urlText;
     private Button confirmBut,cancelBut;
@@ -142,7 +142,7 @@ public class Register extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(Register.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }
@@ -156,11 +156,11 @@ public class Register extends AppCompatActivity {
         }
     }
     private void sendtoHome() {
-        Intent intent = new Intent(Register.this,Home.class);
+        Intent intent = new Intent(RegisterActivity.this,HomeActivity.class);
         startActivity(intent);
     }
     private void sendtoLogin() {
-        Intent intent = new Intent(Register.this,LoginActivity.class);
+        Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
         startActivity(intent);
     }
 }

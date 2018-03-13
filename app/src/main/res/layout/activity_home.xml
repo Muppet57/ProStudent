@@ -4,8 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.student.pro.prostudent.Home"
+    tools:context="com.student.pro.prostudent.HomeActivity"
     android:id="@+id/drawerlayout">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="326dp"
+            android:layout_marginTop="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+
+        </android.support.v7.widget.RecyclerView>
+
+    </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -15,15 +33,18 @@
             layout="@layout/navigation_action"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
     </android.support.v7.widget.LinearLayoutCompat>
+
     <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:menu="@menu/navigation_menu"
         android:layout_gravity="start"
         app:headerLayout="@layout/navigation_header"
-        ></android.support.design.widget.NavigationView>
+        app:menu="@menu/navigation_menu">
 
+    </android.support.design.widget.NavigationView>
 
 
 </android.support.v4.widget.DrawerLayout>

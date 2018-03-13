@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryLight"
-    tools:context="com.student.pro.prostudent.Register">
+    tools:context="com.student.pro.prostudent.RegisterActivity">
 
     <TextView
         android:id="@+id/textView4"
@@ -35,38 +35,36 @@
     <Button
         android:id="@+id/reg_confirm"
         android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/roundbuttonsecondary"
+        android:layout_height="48dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="20dp"
+        android:background="@drawable/roundbuttonaccent"
         android:text="@string/action_create_account"
-        android:textColor="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/colorPrimaryLight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/reg_cancel"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
+        tools:layout_editor_absoluteY="611dp" />
 
     <Button
         android:id="@+id/reg_cancel"
         android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="32dp"
         android:alpha="0.55"
         android:background="@drawable/roundbuttonprimary"
         android:text="@string/action_cancel"
         android:textColor="@color/colorPrimaryLight"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/reg_confirm"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
+        tools:layout_editor_absoluteY="610dp" />
 
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="322dp"
+        android:layout_height="372dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -187,94 +185,30 @@
                 android:id="@+id/reg_surname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:ems="10"
                 android:hint="@string/prompt_surname"
                 android:inputType="textPersonName"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorPrimaryDarkTransparent"
-                app:layout_constraintBottom_toTopOf="@+id/textView3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <EditText
-                android:id="@+id/reg_photo_url"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:ems="10"
-                android:hint="@string/prompt_avatar"
-                android:inputType="none"
-                android:textColorHint="@color/colorPrimaryDarkTransparent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <RadioGroup
-                android:id="@+id/radio_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="8dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/url_but"
-                app:layout_constraintEnd_toEndOf="@+id/textView3"
-                app:layout_constraintStart_toStartOf="@+id/textView3">
-
-                <RadioButton
-                    android:id="@+id/radio_prof"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:text="@string/select_status_1"
-                    android:textColor="@color/colorPrimaryDark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <RadioButton
-                    android:id="@+id/radio_student"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="25dp"
-                    android:text="@string/select_status_2"
-                    android:textColor="@color/colorPrimaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/radio_prof" />
-            </RadioGroup>
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="380dp" />
 
 
             <Button
                 android:id="@+id/url_but"
                 android:layout_width="89dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/roundbuttonupload"
+                android:layout_marginTop="16dp"
+                android:alpha=".75"
+                android:background="@drawable/roundbuttonprimary"
                 android:text="@string/prompt_upload"
                 android:textColor="@color/colorPrimaryLight"
-                android:alpha=".75"
-                app:layout_constraintBottom_toTopOf="@+id/reg_photo_url"
-                app:layout_constraintEnd_toEndOf="@+id/radio_status"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/radio_status" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="108dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="8dp"
-                android:text="@string/status_question"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toTopOf="@+id/radio_status"
-                app:layout_constraintEnd_toEndOf="@+id/reg_surname"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/reg_surname" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reg_surname" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
@@ -286,10 +220,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:indeterminate="true"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="invisible"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
