@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:state_pressed="true" >
         <shape android:shape="rectangle"  >
-            <corners android:radius="3dip" />
-            <stroke android:width="10dip" android:color="#80334154" />
+            <corners android:radius="10dip" />
+            <stroke android:width="1dip" android:color="#80334154" />
             <solid android:color="#80334154"/>
         </shape>
     </item>

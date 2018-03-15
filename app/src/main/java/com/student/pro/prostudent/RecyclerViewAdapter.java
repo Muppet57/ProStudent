@@ -19,11 +19,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ArrayList<String>mNames = new ArrayList<>();
     private ArrayList<String>mTags = new ArrayList<>();
+    private ArrayList<String>mYears = new ArrayList<>();
+
     private Context mContext;
 
-    public RecyclerViewAdapter(ArrayList<String> mNames, ArrayList<String> mTags,Context mContext) {
+    public RecyclerViewAdapter(ArrayList<String> mNames, ArrayList<String> mTags, ArrayList<String> mYears,Context mContext) {
         this.mNames = mNames;
         this.mTags = mTags;
+        this.mYears = mYears;
         this.mContext = mContext;
     }
 
@@ -39,6 +42,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         Log.d(TAG, "onBindViewHolder: called");
         holder.name.setText(mNames.get(position));
         holder.tag.setText(mTags.get(position));
+        holder.year.setText(mYears.get(position));
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -55,10 +59,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView name,tag;
+        TextView name,tag,year;
         ConstraintLayout parentLayout;
         public ViewHolder(View itemView) {
             super(itemView);
+            year=itemView.findViewById(R.id.class_year);
             name=itemView.findViewById(R.id.class_name);
             tag=itemView.findViewById(R.id.class_tag);
             parentLayout=itemView.findViewById(R.id.class_view);

@@ -34,6 +34,9 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">Confirm</string>
 
+    <!-- Strings related to classes-->
+    <string name="label_year">Year</string>
+
     <!-- Strings related to profile-->
     <string name="default_user">Default_user</string>
     <string name="change_pass">Change Password</string>

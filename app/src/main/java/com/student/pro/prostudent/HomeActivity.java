@@ -75,7 +75,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     years.add(postSnapshot.child("year").getValue().toString());
                     tags.add(postSnapshot.child("short").getValue().toString());
                 }
-                initrecycle(names,tags);
+                initrecycle(names,tags,years);
 
             }
 
@@ -86,10 +86,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    private void initrecycle(ArrayList<String> names,ArrayList<String> tags)
+    private void initrecycle(ArrayList<String> names,ArrayList<String> tags,ArrayList<String> years)
     {
         mView = findViewById(R.id.recycler_class);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(names,tags,this);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(names,tags,years,this);
         mView.setAdapter(adapter);
         mView.setLayoutManager(new LinearLayoutManager(this));
     }
