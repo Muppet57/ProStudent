@@ -22,8 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText usernameText,emailText,email_confirmText,passText,pass_confirmText,nameText,surnameText,urlText;
-    private Button confirmBut,cancelBut;
+    private EditText usernameText,emailText,email_confirmText,passText,pass_confirmText,nameText,surnameText;
+    private Button confirmBut,cancelBut,photo;
     private String TAG="Tentativa";
     private ProgressBar registerprogress;
 
@@ -70,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass_confirm = pass_confirmText.getText().toString();
                 String name = nameText.getText().toString();
                 String surname = surnameText.getText().toString();
-                String url = urlText.getText().toString();
+                String url="";
 
                 if(!TextUtils.isEmpty(username) && !TextUtils.isEmpty(email) &&
                         !TextUtils.isEmpty(email_confirm) && !TextUtils.isEmpty(pass) &&
@@ -87,7 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
                     {
                     }
                     else{
-                        if(TextUtils.isEmpty(url))
+                        if(TextUtils.equals(url,""))
                         {
                             url="empty";
                         }
