@@ -1,17 +1,17 @@
 package com.student.pro.prostudent;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,25 +19,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
-
-/*import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;*/
-
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,11 +47,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -63,31 +60,29 @@ public class ProfileActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    // Imagem redonda
+    // Elemento Imagem
     private CircleImageView setupImage;
-    //Codigo de atividade
+    // Caminho Imagem
+    private Uri filePath = null,imageURL=null;
+    //Codigo de atividade Load imagem
     private static int RESULT_LOAD_IMAGE = 1;
-    // Imagem
-    private Uri filePath = null;
     //Firebase
     private StorageReference mStorageRef;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    //Logs
-    private String TAG="DB_TEST",currentUser,picture_path;
+
+    private String TAG="profileteste", UserID;
     //TextView
-    private TextView nameText,emailText,usernameText,surnameText,passText,confirmText;
+    private TextView nameText, emailText, usernameText, surnameText;
     //EditText
-    private EditText oldEdit,nameEdit,emailEdit,usernameEdit,surnameEdit,passEdit,confirmEdit;
+    private EditText nameEdit, emailEdit, usernameEdit, surnameEdit, passEdit, confirmEdit;
     //ViewSwitcher
     private ViewSwitcher email_s,username_s,name_s,surname_s;
     //Buttons
-    private Button emailB,userB,nameB,surnameB;
-
-    public ProfileActivity() {
-    }
-
+    private Button emailB,userB,nameB,surnameB,save_settings;
+    //ProgressBar
+    private ProgressBar profile_bar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +101,6 @@ public class ProfileActivity extends AppCompatActivity {
         this.emailEdit = findViewById(R.id.profile_email2);
         this.usernameEdit = findViewById(R.id.profile_username2);
         this.surnameEdit = findViewById(R.id.profile_surname2);
-        this.oldEdit=findViewById(R.id.profile_old);
         this.passEdit=findViewById(R.id.profile_password);
         this.confirmEdit=findViewById(R.id.profile_confirm_pass);
         //ViewSwitcher
@@ -119,18 +113,16 @@ public class ProfileActivity extends AppCompatActivity {
         this.userB=findViewById(R.id.but_user);
         this.nameB=findViewById(R.id.but_name);
         this.surnameB=findViewById(R.id.but_surname);
-
+        this.save_settings=findViewById(R.id.profile_save);
         //Imagem de Perfil default
         this.setupImage = findViewById(R.id.setup_image);
+        //progressbar
+        this.profile_bar=findViewById(R.id.profile_bar);
 
         //Base de dados
         this.mDatabase = FirebaseDatabase.getInstance().getReference("users");
         //Storage
         this.mStorageRef = FirebaseStorage.getInstance().getReference();
-        //Utilizadores
-        this.mAuth = FirebaseAuth.getInstance();
-        user= mAuth.getCurrentUser();
-        getUserData();
         //Toolbar & Navbar
         this.mToolbar = findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
@@ -140,6 +132,13 @@ public class ProfileActivity extends AppCompatActivity {
         this.mToggle.syncState();
         getSupportActionBar().setTitle(R.string.title_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //Update de informação do utilizador
+        //Utilizadores
+        this.mAuth = FirebaseAuth.getInstance();
+        user= mAuth.getCurrentUser();
+        UserID=user.getUid().toString();
+        getUserData();
 
         /*
         ----- Click Listeners ----
@@ -164,29 +163,100 @@ public class ProfileActivity extends AppCompatActivity {
         emailB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(email_s.getCurrentView()!=emailText)
+                {
+                    email_s.showPrevious();
+                    emailB.setBackgroundResource(R.drawable.ic_action_edit);
 
+                }
+                else{
+                    email_s.showNext();
+                    emailB.setBackgroundResource(R.drawable.ic_action_edit_on);
+                }
             }
         });
         nameB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(name_s.getCurrentView()!=nameText)
+                {
+                    name_s.showPrevious();
+                    nameB.setBackgroundResource(R.drawable.ic_action_edit);
 
+                }
+                else{
+                    name_s.showNext();
+                    nameB.setBackgroundResource(R.drawable.ic_action_edit_on);
+                }
             }
         });
         surnameB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(surname_s.getCurrentView()!=surnameText)
+                {
+                    surname_s.showPrevious();
+                    surnameB.setBackgroundResource(R.drawable.ic_action_edit);
 
+                }
+                else{
+                    surname_s.showNext();
+                    surnameB.setBackgroundResource(R.drawable.ic_action_edit_on);
+                }
+            }
+        });
+        //Guardar alterações
+        save_settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                profile_bar.setVisibility(View.VISIBLE);
+                if(!emailEdit.getText().toString().isEmpty() || !passEdit.getText().toString().isEmpty())
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                    builder.setTitle(R.string.prompt_old_pass);
+
+                    final EditText input = new EditText(ProfileActivity.this);
+                    input.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+                    input.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    builder.setView(input);
+                    //cria Dialogo para introduzir palavra passe
+                    builder.setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(emailEdit.getText()!=null && passEdit.getText()!=null )
+                            {
+                               String m_Text = input.getText().toString();
+                               setUserData(m_Text);
+                            }
+                        }
+                    });
+                    builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+                }
+                else
+                {
+                    setUserData("");
+                }
             }
         });
 
-
-        //Permissões de acesso a storage e Upload de imagem
+        /*
+        Permissões de acesso a storage
+        Seleção de Imagem
+        Upload de imagem
+         */
         setupImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Verifica se a versão é superior à Marshmallow
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                {
                     //Verifica permissão de leitura
                     if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         //Aviso - Permissão negada
@@ -195,58 +265,37 @@ public class ProfileActivity extends AppCompatActivity {
                         ActivityCompat.requestPermissions(ProfileActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                     } else {
                         //Aviso - Permissão já concedida
-                        Toast.makeText(ProfileActivity.this, "You already have permission", Toast.LENGTH_LONG).show();
+                        chooseImage();
+                        Log.d(TAG, "onClick: ENTROU NO PRIMEIRO");
                     }
-                    //Verifica se tem permiissão de escrita
-                    if (ContextCompat.checkSelfPermission(ProfileActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        //Aviso - Permissão negada
-                        Toast.makeText(ProfileActivity.this, "Permission denied", Toast.LENGTH_LONG).show();
-                        //Pedido de permissão
-                        ActivityCompat.requestPermissions(ProfileActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                    } else {
-                        //Escolha e imagem a fazer upload
-                         chooseImage();
-                         uploadImage();
-                    }
+
+                }
+                //Se for inferior (Para versões inferiores a autorização é pedida na play store)
+                else
+                {
+                    chooseImage();
+                    Log.d(TAG, "onClick: ENTROU NO SEGUNDO");
+
                 }
             }
         });
     }
 
-    private void setUserData()
+
+
+    private void setUserData(String oldpass)
     {
-        currentUser = mAuth.getCurrentUser().getUid().toString();
-        if(nameEdit !=null)
-        {
-            mDatabase.child(currentUser).child("name").setValue(nameEdit.getText().toString());
-        }
-        if(emailEdit !=null)
-        {
-            mDatabase.child(currentUser).child("email").setValue(emailEdit.getText().toString());
-
-        }
-        if(usernameEdit !=null)
-        {
-            mDatabase.child(currentUser).child("username").setValue(usernameEdit.getText().toString());
-
-        }
-        if(surnameEdit !=null)
-        {
-            mDatabase.child(currentUser).child("surname").setValue(surnameEdit.getText().toString());
-        }
-
-        /*
-        Alteração da palavra passe no FirebaseAuth e na Base de dados
-        Verificação se os campos foram preenchidos
-
-        FAZER FUNÇÃO NO BUTÃO DE SAVE SETTINGS VERIFICAR POR EMAIL E PASSWORD!!!!
+           /*
+        Alteração da palavra passe ou Email no FirebaseAuth
+        É necessário introduzir palavra passe para fazer alterações no FirabaseAuth
+        Após feitas as alterações com sucesso no FirebaseAuth, são feitas as alterações na Base de dados
+        A palavra passe não é guardada na base de dados
          */
-        if(oldEdit!=null && passEdit!=null &&
-                confirmEdit!=null &&  passEdit.length()>=6 &&
-                passEdit.getText().toString().equals(confirmEdit.getText().toString()))
+        if(!passEdit.getText().toString().isEmpty() && !confirmEdit.getText().toString().isEmpty() &&  passEdit.length()>=6 && passEdit.getText().toString().equals(confirmEdit.getText().toString()))
         {
-            final String email = mAuth.getCurrentUser().getEmail().toString();
-            final String oldpass = oldEdit.getText().toString();
+            Log.d(TAG, "setUserData: ALTERAÇÃO DE PASS");
+
+            final String email = user.getEmail().toString();
             //Progresso de alteração de palavra passe
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Authenticating...");
@@ -256,53 +305,122 @@ public class ProfileActivity extends AppCompatActivity {
             user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                 if(task.isSuccessful())
-                 {
-                     //Alteração da palavra passe
-                     user.updatePassword(passEdit.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                         @Override
-                         public void onComplete(@NonNull Task<Void> task) {
-                             //Sucesso
-                             if(!task.isSuccessful())
-                             {
-                                 progressDialog.dismiss();
-                                 Toast.makeText(ProfileActivity.this, "Something went wrong. Please try again", Toast.LENGTH_SHORT).show();
-                             }
-                             //Falha
-                             else {
-                                 progressDialog.dismiss();
-                                 Toast.makeText(ProfileActivity.this, "Password Successfully Modified", Toast.LENGTH_SHORT).show();
+                    if(task.isSuccessful())
+                    {
+                        //Alteração da palavra passe
+                        user.updatePassword(passEdit.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                //Sucesso
+                                if(!task.isSuccessful())
+                                {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(ProfileActivity.this, "Something went wrong. Your password was not updated. Please try again", Toast.LENGTH_SHORT).show();
+                                }
+                                //Falha
+                                else {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(ProfileActivity.this, "Password Successfully updated", Toast.LENGTH_SHORT).show();
 
-                             }
-                         }
-                     });
-                 }
-                 //Autenticação falhada
-                 else {
-                     progressDialog.dismiss();
-                     Toast.makeText(ProfileActivity.this, "Authentication Failed. Please try again", Toast.LENGTH_SHORT).show();
-                 }
+                                }
+                            }
+                        });
+                    }
+                    //Autenticação falhada
+                    else {
+                        progressDialog.dismiss();
+                        Toast.makeText(ProfileActivity.this, "Authentication Failed. Your password was not updated", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
-            mDatabase.child(currentUser).child("surname").setValue(surnameEdit.getText().toString());
-
         }
+        if(!emailEdit.getText().toString().isEmpty())
+        {
+            Log.d(TAG, "setUserData: Alteração de email");
+            final String email = user.getEmail().toString();
+            //Progresso de alteração de palavra passe
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Authenticating...");
+            progressDialog.show();
+
+            AuthCredential credential = EmailAuthProvider.getCredential(email,oldpass);
+            user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful())
+                    {
+                        //Alteração da palavra passe
+                        user.updateEmail(emailEdit.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                //Sucesso
+                                if(!task.isSuccessful())
+                                {
+                                    progressDialog.dismiss();
+                                    Toast.makeText(ProfileActivity.this, "Something went wrong. Your email was not updated. Please try again", Toast.LENGTH_SHORT).show();
+                                }
+                                //Falha
+                                else {
+                                    progressDialog.dismiss();
+                                    mDatabase.child(UserID).child("email").setValue(emailEdit.getText().toString());
+
+                                    Toast.makeText(ProfileActivity.this, "Email Successfully updated", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                    //Autenticação falhada
+                    else {
+                        progressDialog.dismiss();
+                        Toast.makeText(ProfileActivity.this, "Authentication Failed. Your email was not updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+        if(!nameEdit.getText().toString().isEmpty())
+        {
+            Log.d(TAG, "setUserData: guarda nome");
+            mDatabase.child(UserID).child("name").setValue(nameEdit.getText().toString());
+        }
+        if(!usernameEdit.getText().toString().isEmpty())
+        {
+            Log.d(TAG, "setUserData: guarda username");
+            mDatabase.child(UserID).child("username").setValue(usernameEdit.getText().toString());
+        }
+        if(!surnameEdit.getText().toString().isEmpty())
+        {
+            Log.d(TAG, "setUserData: guarda surname");
+            mDatabase.child(UserID).child("surname").setValue(surnameEdit.getText().toString());
+        }
+        if(imageURL!=null)
+        {
+            Log.d(TAG, "setUserData: guarda imagem url");
+            mDatabase.child(UserID).child("url").setValue(imageURL.toString());
+        }
+        else{
+            profile_bar.setVisibility(View.INVISIBLE);
+            sendtoHome();
+        }
+        profile_bar.setVisibility(View.INVISIBLE);
+        sendtoHome();
 
     }
 
-    private void setProfilePicture()
+    private void sendtoHome() {
+        Intent intent = new Intent(ProfileActivity.this,HomeActivity.class);
+        startActivity(intent);
+    }
+
+
+    private void getUserData()
     {
-
-    }
-
-    private void getUserData(){
-      currentUser = mAuth.getCurrentUser().getUid().toString();
+        profile_bar.setVisibility(View.VISIBLE);
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot postSnapshot : dataSnapshot.getChildren())
                 {
-                if(dataSnapshot.hasChild(currentUser))
+                if(dataSnapshot.hasChild(UserID))
                 {
                     String username,email,name,surname,url;
                     username = postSnapshot.child("username").getValue().toString();
@@ -310,35 +428,30 @@ public class ProfileActivity extends AppCompatActivity {
                     name = postSnapshot.child("name").getValue().toString();
                     surname = postSnapshot.child("surname").getValue().toString();
                     url = postSnapshot.child("url").getValue().toString();
-                    if(username==null || email==null || name==null || surname == null)
-                    {
-                        sendtoLogin();
-                    }
-                    else
-                    {
-                        updateUI(username,email,name,surname);
-                        //Atualizar imagem aqui =)
-                    }
+                    updateUI(username,email,name,surname,url);
                 }
                 }
             }
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.e(TAG,"Entrou 4");
             }
         });
     }
-
-
-
     //Atualização dos dados do utilizador nos campos a editar
-    private void updateUI(String username, String email, String name, String surname)
+    private void updateUI(String username, String email, String name, String surname,String url)
     {
         this.nameText.setHint(name);
         this.usernameText.setHint(username);
         this.emailText.setHint(email);
         this.surnameText.setHint(surname);
+        Picasso.get()
+                .load(url)
+                .placeholder(R.drawable.default_icon)
+                .error(R.drawable.default_icon)
+                .into(setupImage);
+        profile_bar.setVisibility(View.INVISIBLE);
+        Toast.makeText(ProfileActivity.this, "User profile Loaded", Toast.LENGTH_SHORT).show();
     }
     //Criação da atividade para escolher a imagem
     private void chooseImage() {
@@ -346,6 +459,7 @@ public class ProfileActivity extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
+        Log.d(TAG, "chooseImage: ESCOLHEU IMAGEM");
     }
     //Gestão do resultado da atividade
     @Override
@@ -354,6 +468,7 @@ public class ProfileActivity extends AppCompatActivity {
         if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
         {
+            Log.d(TAG, "onActivityResult: RESULTADO IMAGEM");
             filePath = data.getData();
             try {
                 //Atualiza a foto de perfil na app
@@ -364,10 +479,13 @@ public class ProfileActivity extends AppCompatActivity {
             {
                 e.printStackTrace();
             }
+            Log.d(TAG, "onActivityResult: ANTES DO UPLOAD");
+            uploadImage();
         }
     }
     //Upload de Imagem para a FireStorage
     private void uploadImage() {
+        Log.d(TAG, "uploadImage: UPLOAD IMAGE");
         //Verifica se o ficheiro foi escolhido
         if(filePath != null)
         {
@@ -380,20 +498,21 @@ public class ProfileActivity extends AppCompatActivity {
             Imagem é guardada na pasta images com o nome (UserID.jpg)
             Após a tarefa ser concluida (com ou sem sucessso) a caixa de progresso é dispensada
              */
-            StorageReference ref = mStorageRef.child("images/"+currentUser+".jpg" );
+            StorageReference ref = mStorageRef.child("images/"+UserID+".jpg" );
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            imageURL = taskSnapshot.getDownloadUrl();
+                            Toast.makeText(ProfileActivity.this, "Image Uploaded", Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
-                            Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(ProfileActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ProfileActivity.this, "Upload Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -405,6 +524,7 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
         }
+        Log.d(TAG, "uploadImage: DEPOIS UPLOAD");
     }
 
     //Click no hamburguer menu
@@ -418,6 +538,14 @@ public class ProfileActivity extends AppCompatActivity {
     //Retorna o utilizador para o login
     private void sendtoLogin() {
         Intent intent = new Intent(ProfileActivity.this,LoginActivity.class);
+        startActivity(intent);
+    }
+    private void sendtoTickets(){
+        Intent intent = new Intent(ProfileActivity.this,TicketActivity.class);
+        startActivity(intent);
+    }
+    private void sendtoClass(){
+        Intent intent = new Intent(ProfileActivity.this,ClassActivity.class);
         startActivity(intent);
     }
 }

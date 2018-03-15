@@ -35,12 +35,17 @@
     <string name="action_confirm">Confirm</string>
 
     <!-- Strings related to profile-->
-    <string name="default_user">Defaul_user</string>
+    <string name="default_user">Default_user</string>
     <string name="change_pass">Change Password</string>
-    <string name="propmt_new_pass">New Password</string>
-    <string name="propmt_old_pass">Old Password</string>
+    <string name="prompt_new_pass">New Password</string>
+    <string name="prompt_old_pass">Insert current Password</string>
     <string name="save_profile">Save changes</string>
 
+    <!-- Strings related to Create a Ticket-->
+    <string name="label_subject">Subject :</string>
+    <string name="label_question">Question :</string>
+    <string name="action_send">Create Ticket</string>
+    <string name="prompt_question">Please fill this field with your question.\nYou can attach a photo to your question by clicking the image at the top of the screen.</string>
 
 
     <!-- Strings related to toolbar-->
@@ -50,6 +55,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_profile">Profile</string>
+    <string name="title_class">Class</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_new_ticket">Create Ticket</string>
     <string name="title_my_tickets">My Tickets</string>

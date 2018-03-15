@@ -22,13 +22,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 public class RegisterActivity extends AppCompatActivity {
-    private DatabaseReference mDatabase;
     private EditText usernameText,emailText,email_confirmText,passText,pass_confirmText,nameText,surnameText,urlText;
     private Button confirmBut,cancelBut;
-    private FirebaseAuth mAuth;
     private String TAG="Tentativa";
-
     private ProgressBar registerprogress;
+
+    private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+
 
 
     @Override
@@ -47,7 +49,6 @@ public class RegisterActivity extends AppCompatActivity {
         pass_confirmText = findViewById(R.id.reg_confirm_pass);
         nameText = findViewById(R.id.reg_name);
         surnameText = findViewById(R.id.reg_surname);
-        urlText = findViewById(R.id.reg_photo_url);
         cancelBut=findViewById(R.id.reg_cancel);
         confirmBut=findViewById(R.id.reg_confirm);
 
@@ -88,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
                     else{
                         if(TextUtils.isEmpty(url))
                         {
-                            url="https://www.habermanolya.com/wp-content/plugins/all-in-one-seo-pack/images/default-user-image.png";
+                            url="empty";
                         }
                         createAccount(email,pass,username,name,surname,url);
                     }
@@ -125,23 +126,18 @@ public class RegisterActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
 
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             String id = mAuth.getCurrentUser().getUid();
-                            Log.d(TAG,"Get da ID");
 
                             User userdb = new User(username,email,name,surname,url);
-                            Log.d(TAG,"criação do user");
 
                             mDatabase.child(id).setValue(userdb);
-                            Log.d(TAG,"set do user");
                             updateUI(user);
                             registerprogress.setVisibility(View.INVISIBLE);
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(RegisterActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
@@ -163,4 +159,5 @@ public class RegisterActivity extends AppCompatActivity {
         Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
         startActivity(intent);
     }
+
 }

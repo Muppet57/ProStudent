@@ -8,400 +8,378 @@
     android:background="@color/colorPrimaryLight"
     tools:context="com.student.pro.prostudent.ProfileActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/progressBar2"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
-            android:indeterminate="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/profile_cancel"
-            android:layout_width="150dp"
-            android:layout_height="48dp"
-            android:layout_marginBottom="33dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="25dp"
-            android:alpha="0.55"
-            android:background="@drawable/roundbuttonprimary"
-            android:text="@string/action_cancel"
-            android:textColor="@color/colorPrimaryLight"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollView4" />
+            <ProgressBar
+                android:id="@+id/profile_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="55dp"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/profile_save"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="33dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginStart="47dp"
-            android:layout_marginTop="25dp"
-            android:background="@drawable/roundbuttonaccent"
-            android:text="@string/save_profile"
-            android:textColor="@color/colorPrimaryLight"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/profile_cancel"
-            app:layout_constraintTop_toBottomOf="@+id/scrollView4" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/setup_image"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_marginEnd="128dp"
+                android:layout_marginStart="128dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/default_icon"
+                app:civ_border_color="@android:color/transparent"
+                app:civ_border_width="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_bar" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/setup_image"
-            android:layout_width="126dp"
-            android:layout_height="126dp"
-            android:layout_marginTop="87dp"
-            android:src="@drawable/default_icon"
-            app:civ_border_color="@android:color/transparent"
-            app:civ_border_width="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/profile_uname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/default_user"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/setup_image" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/default_user"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/setup_image" />
+            <ScrollView
+                android:id="@+id/scrollView4"
+                android:layout_width="wrap_content"
+                android:layout_height="305dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profile_uname">
 
-        <ScrollView
-            android:id="@+id/scrollView4"
-            android:layout_width="0dp"
-            android:layout_height="305dp"
-            android:layout_marginTop="16dp"
-            android:windowSoftInputMode="adjustNothing"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView8">
-
-            <android.support.constraint.ConstraintLayout
-                android:id="@+id/linearLayout3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:id="@+id/but_email"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/ic_action_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/switch_email"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_email"
-                    app:layout_constraintTop_toTopOf="@+id/switch_email" />
-
-                <TextView
-                    android:id="@+id/tag_email"
-                    android:layout_width="110dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="202dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/prompt_email"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/switch_email"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ViewSwitcher
-                    android:id="@+id/switch_email"
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/linearLayout3"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tag_email">
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/but_email"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="24dp"
+                        android:background="@drawable/ic_action_edit"
+                        app:layout_constraintBottom_toBottomOf="@+id/switch_email"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/switch_email"
+                        app:layout_constraintTop_toTopOf="@+id/switch_email" />
 
                     <TextView
-                        android:id="@+id/profile_email"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tag_email"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/prompt_email"
-                        android:inputType="textEmailAddress"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        android:textSize="18sp"
-                        tools:layout_editor_absoluteY="53dp" />
-
-                    <EditText
-                        android:id="@+id/profile_email2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/prompt_email"
-                        android:inputType="textEmailAddress"
+                        android:layout_marginEnd="169dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/prompt_email"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        tools:layout_editor_absoluteX="46dp"
-                        tools:layout_editor_absoluteY="307dp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                </ViewSwitcher>
+                    <ViewSwitcher
+                        android:id="@+id/switch_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tag_email">
 
-                <TextView
-                    android:id="@+id/tag_username"
-                    android:layout_width="142dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="170dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/prompt_username"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/switch_username"
-                    app:layout_constraintTop_toBottomOf="@+id/switch_email" />
+                        <TextView
+                            android:id="@+id/profile_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_email"
+                            android:inputType="textEmailAddress"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            android:textSize="18sp"
+                            tools:layout_editor_absoluteY="53dp" />
 
-                <Button
-                    android:id="@+id/but_user"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/ic_action_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/switch_username"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_username"
-                    app:layout_constraintTop_toTopOf="@+id/switch_username" />
+                        <EditText
+                            android:id="@+id/profile_email2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_email"
+                            android:inputType="textEmailAddress"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            tools:layout_editor_absoluteX="46dp"
+                            tools:layout_editor_absoluteY="307dp" />
 
-                <ViewSwitcher
-                    android:id="@+id/switch_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tag_username">
+                    </ViewSwitcher>
 
                     <TextView
-                        android:id="@+id/profile_username"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tag_username"
+                        android:layout_width="142dp"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/prompt_username"
-                        android:inputType="text"
+                        android:layout_marginEnd="137dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/prompt_username"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        android:textSize="18sp"
-                        tools:layout_editor_absoluteY="150dp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/switch_username"
+                        app:layout_constraintTop_toBottomOf="@+id/switch_email" />
 
-                    <EditText
-                        android:id="@+id/profile_username2"
-                        android:layout_width="match_parent"
+                    <Button
+                        android:id="@+id/but_user"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="24dp"
+                        android:background="@drawable/ic_action_edit"
+                        app:layout_constraintBottom_toBottomOf="@+id/switch_username"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/switch_username"
+                        app:layout_constraintTop_toTopOf="@+id/switch_username" />
+
+                    <ViewSwitcher
+                        android:id="@+id/switch_username"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/prompt_username"
-                        android:inputType="text"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        tools:layout_editor_absoluteY="150dp" />
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tag_username">
 
-                </ViewSwitcher>
+                        <TextView
+                            android:id="@+id/profile_username"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_username"
+                            android:inputType="text"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            android:textSize="18sp"
+                            tools:layout_editor_absoluteY="150dp" />
 
-                <TextView
-                    android:id="@+id/tag_name"
-                    android:layout_width="111dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="201dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/prompt_name"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/switch_name"
-                    app:layout_constraintTop_toBottomOf="@+id/switch_username" />
+                        <EditText
+                            android:id="@+id/profile_username2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_username"
+                            android:inputType="text"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            tools:layout_editor_absoluteY="150dp" />
 
-                <Button
-                    android:id="@+id/but_name"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/ic_action_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/switch_name"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_name"
-                    app:layout_constraintTop_toTopOf="@+id/switch_name" />
-
-                <ViewSwitcher
-                    android:id="@+id/switch_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tag_name">
+                    </ViewSwitcher>
 
                     <TextView
-                        android:id="@+id/profile_name"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tag_name"
+                        android:layout_width="111dp"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/prompt_name"
-                        android:inputType="none|textPersonName"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/prompt_name"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        android:textSize="18sp"
-                        tools:layout_editor_absoluteY="248dp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/switch_username" />
 
-                    <EditText
-                        android:id="@+id/profile_name2"
-                        android:layout_width="match_parent"
+                    <Button
+                        android:id="@+id/but_name"
+                        android:layout_width="43dp"
+                        android:layout_height="45dp"
+                        android:layout_marginStart="24dp"
+                        android:background="@drawable/ic_action_edit"
+                        app:layout_constraintBottom_toBottomOf="@+id/switch_name"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/switch_name"
+                        app:layout_constraintTop_toTopOf="@+id/switch_name" />
+
+                    <ViewSwitcher
+                        android:id="@+id/switch_name"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/prompt_name"
-                        android:inputType="none|textPersonName"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        tools:layout_editor_absoluteY="248dp" />
-                </ViewSwitcher>
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tag_name">
 
-                <TextView
-                    android:id="@+id/tag_surname"
-                    android:layout_width="126dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/prompt_surname"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="@+id/switch_surname"
-                    app:layout_constraintTop_toBottomOf="@+id/switch_name" />
+                        <TextView
+                            android:id="@+id/profile_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_name"
+                            android:inputType="none|textPersonName"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            android:textSize="18sp"
+                            tools:layout_editor_absoluteY="248dp" />
 
-                <Button
-                    android:id="@+id/but_surname"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/ic_action_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/switch_surname"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_surname"
-                    app:layout_constraintTop_toTopOf="@+id/switch_surname" />
-
-                <ViewSwitcher
-                    android:id="@+id/switch_surname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tag_surname">
+                        <EditText
+                            android:id="@+id/profile_name2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_name"
+                            android:inputType="none|textPersonName"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            tools:layout_editor_absoluteY="248dp" />
+                    </ViewSwitcher>
 
                     <TextView
-                        android:id="@+id/profile_surname"
-                        android:layout_width="match_parent"
+                        android:id="@+id/tag_surname"
+                        android:layout_width="126dp"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:hint="@string/prompt_surname"
-                        android:inputType="none|textPersonName"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/prompt_surname"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        android:textSize="18sp"
-                        tools:layout_editor_absoluteY="345dp" />
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="@+id/switch_surname"
+                        app:layout_constraintTop_toBottomOf="@+id/switch_name" />
+
+                    <Button
+                        android:id="@+id/but_surname"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="24dp"
+                        android:background="@drawable/ic_action_edit"
+                        app:layout_constraintBottom_toBottomOf="@+id/switch_surname"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/switch_surname"
+                        app:layout_constraintTop_toTopOf="@+id/switch_surname" />
+
+                    <ViewSwitcher
+                        android:id="@+id/switch_surname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tag_surname">
+
+                        <TextView
+                            android:id="@+id/profile_surname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_surname"
+                            android:inputType="none|textPersonName"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            android:textSize="18sp"
+                            tools:layout_editor_absoluteY="345dp" />
+
+                        <EditText
+                            android:id="@+id/profile_surname2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="@string/prompt_surname"
+                            android:inputType="none|textPersonName"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textColorHint="@color/colorPrimaryDarkTransparent"
+                            tools:layout_editor_absoluteY="345dp" />
+                    </ViewSwitcher>
+
+                    <TextView
+                        android:id="@+id/tag-password"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="152dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/change_pass"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/switch_surname" />
 
                     <EditText
-                        android:id="@+id/profile_surname2"
-                        android:layout_width="match_parent"
+                        android:id="@+id/profile_password"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
                         android:ems="10"
-                        android:hint="@string/prompt_surname"
-                        android:inputType="none|textPersonName"
+                        android:hint="@string/prompt_new_pass"
+                        android:inputType="none|textPassword"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
-                        tools:layout_editor_absoluteY="345dp" />
-                </ViewSwitcher>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tag-password" />
 
-                <TextView
-                    android:id="@+id/tag-password"
-                    android:layout_width="192dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="120dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/change_pass"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/profile_password"
-                    app:layout_constraintTop_toBottomOf="@+id/switch_surname" />
+                    <EditText
+                        android:id="@+id/profile_confirm_pass"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginTop="16dp"
+                        android:ems="10"
+                        android:hint="@string/prompt_confirm_password"
+                        android:inputType="none|textPassword"
+                        android:textColor="@color/colorPrimaryDark"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/profile_password" />
 
-                <EditText
-                    android:id="@+id/profile_old"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="99dp"
-                    android:layout_marginStart="99dp"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:hint="@string/propmt_old_pass"
-                    android:inputType="textPersonName"
-                    android:textColor="@color/colorPrimaryDark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tag-password" />
+                </android.support.constraint.ConstraintLayout>
+            </ScrollView>
 
-                <EditText
-                    android:id="@+id/profile_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="99dp"
-                    android:layout_marginStart="99dp"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:hint="@string/propmt_new_pass"
-                    android:inputType="none|textPassword"
-                    android:textColor="@color/colorPrimaryDark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/profile_old" />
+            <Button
+                android:id="@+id/profile_save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/roundbuttonaccent"
+                android:text="@string/save_profile"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimaryLight"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/profile_cancel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollView4" />
 
-                <EditText
-                    android:id="@+id/profile_confirm_pass"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:hint="@string/prompt_confirm_password"
-                    android:inputType="none|textPassword"
-                    android:textColor="@color/colorPrimaryDark"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/profile_password" />
+            <Button
+                android:id="@+id/profile_cancel"
+                android:layout_width="150dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="33dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="25dp"
+                android:alpha="0.55"
+                android:background="@drawable/roundbuttonprimary"
+                android:text="@string/action_cancel"
+                android:textColor="@color/colorPrimaryLight"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/scrollView4" />
 
-            </android.support.constraint.ConstraintLayout>
-        </ScrollView>
-    </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/linearLayoutCompat"
