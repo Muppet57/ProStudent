@@ -83,6 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Button emailB,userB,nameB,surnameB,save_settings;
     //ProgressBar
     private ProgressBar profile_bar;
+    private Boolean upload_needed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,6 +243,7 @@ public class ProfileActivity extends AppCompatActivity {
                 else
                 {
                     setUserData("");
+
                 }
             }
         });
@@ -377,6 +379,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
         }
+
         if(!nameEdit.getText().toString().isEmpty())
         {
             Log.d(TAG, "setUserData: guarda nome");
@@ -397,6 +400,12 @@ public class ProfileActivity extends AppCompatActivity {
             Log.d(TAG, "setUserData: guarda imagem url");
             mDatabase.child(UserID).child("url").setValue(imageURL.toString());
         }
+        //-------------------------------------------------------WARNING-------------------
+        if(upload_needed==true)
+        {
+            uploadImage();
+        }
+        //-------------------------------------------------------WARNING-------------------
         else{
             profile_bar.setVisibility(View.INVISIBLE);
             sendtoHome();
@@ -474,13 +483,14 @@ public class ProfileActivity extends AppCompatActivity {
                 //Atualiza a foto de perfil na app
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 setupImage.setImageBitmap(bitmap);
+                upload_needed = true;
             }
             catch (IOException e)
             {
                 e.printStackTrace();
             }
             Log.d(TAG, "onActivityResult: ANTES DO UPLOAD");
-            uploadImage();
+            //uploadImage();
         }
     }
     //Upload de Imagem para a FireStorage
@@ -524,7 +534,9 @@ public class ProfileActivity extends AppCompatActivity {
                         }
                     });
         }
+        upload_needed=false;
         Log.d(TAG, "uploadImage: DEPOIS UPLOAD");
+
     }
 
     //Click no hamburguer menu

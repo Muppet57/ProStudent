@@ -44,8 +44,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
         mToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.open,R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(R.string.title_dashboard);
-
+        getSupportActionBar().setTitle(R.string.title_new_ticket);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

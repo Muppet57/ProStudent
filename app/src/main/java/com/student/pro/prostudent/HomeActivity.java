@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -65,17 +67,33 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<String> names = new ArrayList<String>();
-                ArrayList<String> tags = new ArrayList<String>();
-                ArrayList<String> years = new ArrayList<String>();
+
+                int cnt1=0,cnt2=0;
+                ArrayList<Disciplines> ucs = new ArrayList<Disciplines>();
 
                 for(DataSnapshot postSnapshot : dataSnapshot.getChildren())
                 {
-                    names.add(postSnapshot.child("name").getValue().toString());
-                    years.add(postSnapshot.child("year").getValue().toString());
-                    tags.add(postSnapshot.child("short").getValue().toString());
+                    String name,year,tag;
+
+                    name=postSnapshot.child("name").getValue().toString();
+                    year= postSnapshot.child("year").getValue().toString();
+                    tag=postSnapshot.child("short").getValue().toString();
+
+                    if(postSnapshot.child("year").getValue().toString().equals("1"))
+                    {
+                        cnt1++;
+
+                    }
+                    if(postSnapshot.child("year").getValue().toString().equals("2"))
+                    {
+                        cnt2++;
+                    }
+                    Disciplines uc = new Disciplines(name,year,tag);
+                    ucs.add(uc);
                 }
-                initrecycle(names,tags,years);
+
+                initrecycle(ucs,cnt1,cnt2);
+                Log.d(TAG, "onDataChange: "+cnt1+" " + cnt2);
 
             }
 
@@ -86,12 +104,31 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    private void initrecycle(ArrayList<String> names,ArrayList<String> tags,ArrayList<String> years)
+
+    private void initrecycle(ArrayList<Disciplines> ucs,int cnt1,int cnt2)
     {
+        Collections.sort(ucs, new CustomCompare());
+
         mView = findViewById(R.id.recycler_class);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(names,tags,years,this);
-        mView.setAdapter(adapter);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(ucs,this);
+
+        //This is the code to provide a sectioned list
+        List<SectionedAdapter.Section> sections =
+                new ArrayList<SectionedAdapter.Section>();
+
+        //Sections
+        sections.add(new SectionedAdapter.Section(0,"1st Year"));
+        sections.add(new SectionedAdapter.Section(cnt1,"2nd Year"));
+        sections.add(new SectionedAdapter.Section(cnt2+cnt1,"3rd Year"));
+        SectionedAdapter.Section[] dummy = new SectionedAdapter.Section[sections.size()];
+        SectionedAdapter mSectionedAdapter = new
+                SectionedAdapter(this,R.layout.header_section,R.id.section_header,adapter);
+        mSectionedAdapter.setSections(sections.toArray(dummy));
+
+        mView.setAdapter(mSectionedAdapter);
         mView.setLayoutManager(new LinearLayoutManager(this));
+
+
     }
 
     private void setNavigationViewListener() {

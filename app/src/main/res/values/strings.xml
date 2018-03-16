@@ -46,9 +46,10 @@
 
     <!-- Strings related to Create a Ticket-->
     <string name="label_subject">Subject :</string>
+    <string name="prompt_title">Title here</string>
     <string name="label_question">Question :</string>
     <string name="action_send">Create Ticket</string>
-    <string name="prompt_question">Please fill this field with your question.\nYou can attach a photo to your question by clicking the image at the top of the screen.</string>
+    <string name="prompt_question">Please fill this field with your question.</string>
 
 
     <!-- Strings related to toolbar-->

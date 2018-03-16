@@ -17,16 +17,12 @@ import java.util.ArrayList;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "RecyclerViewAdapter";
 
-    private ArrayList<String>mNames = new ArrayList<>();
-    private ArrayList<String>mTags = new ArrayList<>();
-    private ArrayList<String>mYears = new ArrayList<>();
+    private ArrayList<Disciplines>ucs = new ArrayList<>();
 
     private Context mContext;
 
-    public RecyclerViewAdapter(ArrayList<String> mNames, ArrayList<String> mTags, ArrayList<String> mYears,Context mContext) {
-        this.mNames = mNames;
-        this.mTags = mTags;
-        this.mYears = mYears;
+    public RecyclerViewAdapter(ArrayList<Disciplines> ucs,Context mContext) {
+        this.ucs = ucs;
         this.mContext = mContext;
     }
 
@@ -40,13 +36,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called");
-        holder.name.setText(mNames.get(position));
-        holder.tag.setText(mTags.get(position));
-        holder.year.setText(mYears.get(position));
+        holder.name.setText(ucs.get(position).getName().toString());
+        holder.tag.setText(ucs.get(position).getTag().toString());
+        holder.year.setText(ucs.get(position).getYear().toString());
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "onClick: Click on "+mNames.get(position));
+                Log.d(TAG, "onClick: Click on "+ucs.get(position).getName().toString());
             }
         });
         
@@ -54,7 +50,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public int getItemCount() {
-        return mNames.size();
+        return ucs.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
