@@ -1,6 +1,6 @@
-package com.student.pro.prostudent;
+package com.student.pro.prostudent.Comparators;
 
-import com.student.pro.prostudent.Disciplines;
+import com.student.pro.prostudent.Objects.Disciplines;
 
 import java.util.Comparator;
 
@@ -8,7 +8,7 @@ import java.util.Comparator;
  * Created by jonnh on 3/15/2018.
  */
 
-public class CustomCompare implements Comparator<Disciplines> {
+public class CustomCompareDiscipline implements Comparator<Disciplines> {
 
     @Override
     public int compare(Disciplines disciplines, Disciplines t1) {

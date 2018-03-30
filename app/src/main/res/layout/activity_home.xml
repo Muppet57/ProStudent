@@ -4,24 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.student.pro.prostudent.HomeActivity"
+    tools:context="com.student.pro.prostudent.Activities.HomeActivity"
     android:id="@+id/drawerlayout">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_class"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="71dp"
+            android:layout_marginTop="55dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/class_layout">
+            tools:listitem="@layout/student_discipline_layout">
 
         </android.support.v7.widget.RecyclerView>
 

@@ -1,4 +1,4 @@
-package com.student.pro.prostudent;
+package com.student.pro.prostudent.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -35,25 +36,25 @@ public class SectionedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         mBaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                mValid = mBaseAdapter.getItemCount()>0;
+                mValid = mBaseAdapter.getItemCount() > 0;
                 notifyDataSetChanged();
             }
 
             @Override
             public void onItemRangeChanged(int positionStart, int itemCount) {
-                mValid = mBaseAdapter.getItemCount()>0;
+                mValid = mBaseAdapter.getItemCount() > 0;
                 notifyItemRangeChanged(positionStart, itemCount);
             }
 
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                mValid = mBaseAdapter.getItemCount()>0;
+                mValid = mBaseAdapter.getItemCount() > 0;
                 notifyItemRangeInserted(positionStart, itemCount);
             }
 
             @Override
             public void onItemRangeRemoved(int positionStart, int itemCount) {
-                mValid = mBaseAdapter.getItemCount()>0;
+                mValid = mBaseAdapter.getItemCount() > 0;
                 notifyItemRangeRemoved(positionStart, itemCount);
             }
         });
@@ -74,18 +75,18 @@ public class SectionedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int typeView) {
         if (typeView == SECTION_TYPE) {
             final View view = LayoutInflater.from(mContext).inflate(mSectionResourceId, parent, false);
-            return new SectionViewHolder(view,mTextResourceId);
-        }else{
-            return mBaseAdapter.onCreateViewHolder(parent, typeView -1);
+            return new SectionViewHolder(view, mTextResourceId);
+        } else {
+            return mBaseAdapter.onCreateViewHolder(parent, typeView - 1);
         }
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder sectionViewHolder, int position) {
         if (isSectionHeaderPosition(position)) {
-            ((SectionViewHolder)sectionViewHolder).title.setText(mSections.get(position).title);
-        }else{
-            mBaseAdapter.onBindViewHolder(sectionViewHolder,sectionedPositionToPosition(position));
+            ((SectionViewHolder) sectionViewHolder).title.setText(mSections.get(position).title);
+        } else {
+            mBaseAdapter.onBindViewHolder(sectionViewHolder, sectionedPositionToPosition(position));
         }
 
     }
@@ -94,7 +95,7 @@ public class SectionedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public int getItemViewType(int position) {
         return isSectionHeaderPosition(position)
                 ? SECTION_TYPE
-                : mBaseAdapter.getItemViewType(sectionedPositionToPosition(position)) +1 ;
+                : mBaseAdapter.getItemViewType(sectionedPositionToPosition(position)) + 1;
     }
 
 

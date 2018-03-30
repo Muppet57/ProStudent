@@ -2,7 +2,7 @@
     <string name="app_name">ClassTicket</string>
 
     <!-- Strings related to login -->
-    <string name="welcome">Welcome to</string>
+    <string name="msg_welcome">Welcome to</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -11,9 +11,9 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="authentication_success">You are signed in</string>
+    <string name="authentication_failed">The authentication failed</string>
 
     <!--Strings related to new account-->
     <string name="prompt_username">Username</string>
@@ -23,12 +23,11 @@
     <string name="prompt_avatar">Photo URL</string>
     <string name="prompt_confirm_password">Confirm Password</string>
     <string name="prompt_confirm_email">Confirm Email</string>
-    <string name="prompt_status">Status</string>
+    <string name="label_status">Status</string>
     <string name="select_status_1">Professor</string>
     <string name="select_status_2">Student</string>
     <string name="action_create_account">Create account</string>
-    <string name="message_create">Create a new account</string>
-    <string name="status_question">What are you?</string>
+    <string name="msg_create">Create a new account</string>
 
     <!-- Strings related to general content-->
     <string name="action_cancel">Cancel</string>
@@ -36,9 +35,13 @@
 
     <!-- Strings related to classes-->
     <string name="label_year">Year</string>
+    <string name="label_notes">Notes</string>
+    <string name="label_tickets">Tickets</string>
+    <string name="warning_notes">There are no Notes available at the moment.\nTry again later</string>
+    <string name="warning_tickets">There are no Tickets available at the moment.\nTry again later</string>
 
     <!-- Strings related to profile-->
-    <string name="default_user">Default_user</string>
+    <string name="default_user">Default User</string>
     <string name="change_pass">Change Password</string>
     <string name="prompt_new_pass">New Password</string>
     <string name="prompt_old_pass">Insert current Password</string>
@@ -46,11 +49,18 @@
 
     <!-- Strings related to Create a Ticket-->
     <string name="label_subject">Subject :</string>
-    <string name="prompt_title">Title here</string>
+    <string name="prompt_subject">Subject here</string>
     <string name="label_question">Question :</string>
-    <string name="action_send">Create Ticket</string>
-    <string name="prompt_question">Please fill this field with your question.</string>
+    <string name="action_send_ticket">Create Ticket</string>
+    <string name="prompt_question">Your question.</string>
+    <string name="prompt_public">Private Message ?</string>
 
+    <!-- Strings related to Create a Note-->
+    <string name="label_title">Title :</string>
+    <string name="prompt_title">Title here</string>
+    <string name="label_Message">Message :</string>
+    <string name="action_send_note">Create Note</string>
+    <string name="prompt_message">Enter a short message.</string>
 
     <!-- Strings related to toolbar-->
     <string name="open">Open</string>
@@ -59,11 +69,13 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_profile">Profile</string>
-    <string name="title_class">Class</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_new_ticket">Create Ticket</string>
+    <string name="title_class">Favorites</string>
+    <string name="title_home">Home</string>
     <string name="title_my_tickets">My Tickets</string>
-    <string name="action_settings">Settings</string>
-    <string name="action_logout">Log out</string>
+    <string name="title_my_notes">My Notes</string>
+
+    <string name="title_settings">Settings</string>
+    <string name="title_logout">Log out</string>
+    <string name="title_activity_main">MainActivity</string>
 
 </resources>

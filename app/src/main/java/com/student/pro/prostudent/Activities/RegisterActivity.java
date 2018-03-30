@@ -1,4 +1,4 @@
-package com.student.pro.prostudent;
+package com.student.pro.prostudent.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,17 +22,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.student.pro.prostudent.Objects.Users;
+import com.student.pro.prostudent.R;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText usernameText,emailText,email_confirmText,passText,pass_confirmText,nameText,surnameText;
-    private Button confirmBut,cancelBut,photo;
-    private String TAG="Tentativa";
+    private EditText usernameText, emailText, email_confirmText, passText, pass_confirmText, nameText, surnameText;
+    private Button confirmBut;
+    private String TAG = "Tentativa";
     private ProgressBar registerprogress;
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private FirebaseUser user;
-
 
 
     @Override
@@ -38,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mAuth=FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
@@ -49,15 +53,9 @@ public class RegisterActivity extends AppCompatActivity {
         pass_confirmText = findViewById(R.id.reg_confirm_pass);
         nameText = findViewById(R.id.reg_name);
         surnameText = findViewById(R.id.reg_surname);
-        cancelBut=findViewById(R.id.reg_cancel);
-        confirmBut=findViewById(R.id.reg_confirm);
+        confirmBut = findViewById(R.id.reg_confirm);
+        radioGroup = findViewById(R.id.radioGroup);
 
-        cancelBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendtoLogin();;
-            }
-        });
         confirmBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,56 +68,42 @@ public class RegisterActivity extends AppCompatActivity {
                 String pass_confirm = pass_confirmText.getText().toString();
                 String name = nameText.getText().toString();
                 String surname = surnameText.getText().toString();
-                String url="";
+                String url = "empty";
+                radioButton = radioGroup.findViewById(radioGroup.getCheckedRadioButtonId());
+                String status = radioButton.getText().toString().toLowerCase();
+                //image url is set to empty by default, the user must select a picture while editing his profile
 
-                if(!TextUtils.isEmpty(username) && !TextUtils.isEmpty(email) &&
+                //If all the required fields aren't empty
+                if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(email) &&
                         !TextUtils.isEmpty(email_confirm) && !TextUtils.isEmpty(pass) &&
                         !TextUtils.isEmpty(pass_confirm) && !TextUtils.isEmpty(name) &&
-                        !TextUtils.isEmpty(surname))
-                {
+                        !TextUtils.isEmpty(surname) && !TextUtils.isEmpty(status)) {
                     registerprogress.setVisibility(View.VISIBLE);
-                    if(!TextUtils.equals(email,email_confirm))
-                    {
-                        //emails not match
+                    //Show the progress bar
+                    //Check for if emails match
+                    if (!TextUtils.equals(email, email_confirm)) {
+                        //emails don't match
 
                     }
-                    if(!TextUtils.equals(pass,pass_confirm))
-                    {
+                    //Check if passwords match
+                    if (!TextUtils.equals(pass, pass_confirm)) {
+                        //passwords don't match
                     }
-                    else{
-                        if(TextUtils.equals(url,""))
-                        {
-                            url="empty";
-                        }
-                        createAccount(email,pass,username,name,surname,url);
+                    //User input was accepted
+                    else {
+                        //Calls the function to create a new account while passing the required parameters
+                        Users user = new Users(username, email, name, surname, url, status);
+
+                        createAccount(user, pass);
                     }
                 }
             }
         });
     }
-    @IgnoreExtraProperties
-    public static class User {
-        public String username, email, name, surname, url;
 
-        public User() { }
-        public User(String username, String email, String name, String surname, String url) {
-            this.username = username;
-            this.email = email;
-            this.name = name;
-            this.surname = surname;
-            this.url = url;
-        }
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-       updateUI(currentUser);
-    }
 
-    private void createAccount(final String email, String pw, final String username, final String name, final String surname, final String url)
-    {
-        mAuth.createUserWithEmailAndPassword(email, pw)
+    private void createAccount(final Users userdb, String pass) {
+        mAuth.createUserWithEmailAndPassword(userdb.getEmail(), pass)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -127,18 +111,14 @@ public class RegisterActivity extends AppCompatActivity {
 
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-
-                            String id = mAuth.getCurrentUser().getUid();
-
-                            User userdb = new User(username,email,name,surname,url);
-
-                            mDatabase.child(id).setValue(userdb);
+                            String USERID = mAuth.getCurrentUser().getUid();
+                            mDatabase.child(USERID).setValue(userdb);
                             updateUI(user);
                             registerprogress.setVisibility(View.INVISIBLE);
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }
@@ -146,18 +126,19 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        if(currentUser!=null)
-        {
+        if (currentUser != null) {
             sendtoHome();
         }
     }
+
     private void sendtoHome() {
-        Intent intent = new Intent(RegisterActivity.this,HomeActivity.class);
-        startActivity(intent);
-    }
-    private void sendtoLogin() {
-        Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
+        Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
 }
