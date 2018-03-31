@@ -173,32 +173,19 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Disciplines> ucs = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    // Entra 2 vezes
-                    // Curso 0 & curso 1
-                    Log.d(TAG, "Postsnapshot Key = " + postSnapshot.getKey());
+
                     if (containsId(courses, postSnapshot.getKey())) {
-                        //Se id condiz, entra
-                        // 2 vezes
-                        Log.d(TAG, "Contains Key");
+
                         for (int i = 0; i < courses.size(); i++) {
-                            //4 Vezes
-                            Log.d(TAG, "Class ID value = " + courses.get(0).getClass_id() + " " + courses.get(1).getClass_id() + " " + courses.get(2).getClass_id() + " " + courses.get(3).getClass_id());
                             for (DataSnapshot postpostSnap : postSnapshot.child("ucs").getChildren()) {
-                                // 29 vezes
-                                Log.d(TAG, "Inside UCS");
-                                Log.d(TAG, "postpostSnap Key = " + postpostSnap.getKey());
-                                Log.d(TAG, "Course Key = " + courses.get(i).getClass_id());
-                                if (courses.get(i).getClass_id().equals(postpostSnap.getKey())) {
-                                    Log.d(TAG, "Class ID Matches post Key");
-                                    String name, year, tag, id;
+                               if (courses.get(i).getClass_id().equals(postpostSnap.getKey()) && courses.get(i).getCourse_id().toString().equals(postSnapshot.getKey())) {
+                                  String name, year, tag, id;
                                     name = postpostSnap.child("name").getValue().toString();
                                     year = postpostSnap.child("year").getValue().toString();
                                     tag = postpostSnap.child("short").getValue().toString();
                                     id = postpostSnap.getKey().toString();
                                     Disciplines uc = new Disciplines(name, year, tag, id);
                                     ucs.add(uc);
-                                    Log.d(TAG, "Saved object = " + uc.getTag());
-
                                     break;
                                 }
                             }

@@ -138,8 +138,8 @@ public class ProfileActivity extends AppCompatActivity {
         this.UserID = user.getUid().toString();
 
         //Base de dados
-        this.mDatabase = FirebaseDatabase.getInstance().getReference("users").child(this.UserID);
-        Log.d(TAG, "onCreate: "+ this.UserID);
+        this.mDatabase = FirebaseDatabase.getInstance().getReference("users");
+
         getUserData();
 
         /*
@@ -383,12 +383,11 @@ public class ProfileActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 String username, email, name, surname, url;
-                username = dataSnapshot.child("username").getValue().toString();
-                email = dataSnapshot.child("email").getValue().toString();
-                name = dataSnapshot.child("name").getValue().toString();
-                surname = dataSnapshot.child("surname").getValue().toString();
-                url = dataSnapshot.child("url").getValue().toString();
-                Log.d(TAG, "onDataChange:"+url);
+                username = dataSnapshot.child(UserID).child("username").getValue().toString();
+                email = dataSnapshot.child(UserID).child("email").getValue().toString();
+                name = dataSnapshot.child(UserID).child("name").getValue().toString();
+                surname = dataSnapshot.child(UserID).child("surname").getValue().toString();
+                url = dataSnapshot.child(UserID).child("url").getValue().toString();
                 updateUI(username, email, name, surname, url);
 
             }
@@ -406,7 +405,6 @@ public class ProfileActivity extends AppCompatActivity {
         this.usernameText.setHint(username);
         this.emailText.setHint(email);
         this.surnameText.setHint(surname);
-        Log.d(TAG, "updateUI: " + url);
         Picasso.get()
                 .load(url)
                 .placeholder(R.drawable.default_icon)

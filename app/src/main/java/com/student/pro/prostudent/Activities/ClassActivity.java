@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +43,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
-    private String user_id, discipline, disc_key;
+    private String user_id, discipline, disc_key,status;
     private String TAG = "ticketstest";
 
     private RecyclerView mRecyclerNotes, mRecyclerTickets;
@@ -60,6 +61,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
         if (extras != null) {
             discipline = intent.getStringExtra("Discipline");
             disc_key = intent.getStringExtra("ID");
+            status = intent.getStringExtra("Status");
         } else {
             /*
               This page needs to inherit information about the discipline selected
@@ -115,6 +117,14 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                 startActivity(intent);
             }
         });
+        if(TextUtils.equals(status,"professor"))
+        {
+            ticket_add.setVisibility(View.GONE);
+        }
+        else
+        {
+            note_add.setVisibility(View.GONE);
+        }
     }
 
     private void getKey() {

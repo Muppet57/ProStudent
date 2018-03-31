@@ -119,6 +119,7 @@ public class AdapterProfessor extends RecyclerView.Adapter<AdapterProfessor.View
                 Intent intent = new Intent(mContext, ClassActivity.class);
                 intent.putExtra("Discipline", ucs.get(position).getTag().toString());
                 intent.putExtra("ID", ucs.get(position).getId().toString());
+                intent.putExtra("Status","professor");
                 mContext.startActivity(intent);
             }
         });
