@@ -2,6 +2,7 @@ package com.student.pro.prostudent.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,17 +10,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,11 +25,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.student.pro.prostudent.Adapters.AdapterProfessor;
 import com.student.pro.prostudent.Adapters.AdapterStudent;
+import com.student.pro.prostudent.Adapters.SectionedAdapter;
 import com.student.pro.prostudent.Comparators.CustomCompareDiscipline;
 import com.student.pro.prostudent.Objects.Course_Class;
 import com.student.pro.prostudent.Objects.Disciplines;
+import com.student.pro.prostudent.Objects.Favorite;
 import com.student.pro.prostudent.R;
-import com.student.pro.prostudent.Adapters.SectionedAdapter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
@@ -59,7 +59,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        //getSupportActionBar().setTitle(R.string.title_home);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -70,14 +69,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         getStatus();
     }
 
+    //Retrieve User status
     private void getStatus() {
         mDB_User.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Boolean flag = false;
                 if (dataSnapshot.getValue().toString().equals("student")) {
                     getCourseStudent();
-                    flag = true;
                 } else {
                     getCoursesProfessor();
                 }
@@ -89,8 +87,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    //Fetch course associated with student
     private void getCourseStudent() {
-
         mDB_Student.child(UserID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -104,6 +102,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    //Retrieve classes associated with student course
     private void getClassesStudent(String course) {
         mDatabase = FirebaseDatabase.getInstance().getReference("courses/course/" + course + "/ucs");
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -141,6 +140,30 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    //Start the recycler view for the student
+    private void initRecycleStudent(ArrayList<Disciplines> ucs, int cnt1, int cnt2) {
+        Collections.sort(ucs, new CustomCompareDiscipline());
+
+        mView = findViewById(R.id.recycler_class);
+        AdapterStudent adapter = new AdapterStudent(ucs, this);
+
+        //Criar
+        List<SectionedAdapter.Section> sections =
+                new ArrayList<>();
+
+        sections.add(new SectionedAdapter.Section(0, "1st Year"));
+        sections.add(new SectionedAdapter.Section(cnt1, "2nd Year"));
+        sections.add(new SectionedAdapter.Section(cnt2 + cnt1, "3rd Year"));
+        SectionedAdapter.Section[] dummy = new SectionedAdapter.Section[sections.size()];
+        SectionedAdapter mSectionedAdapter = new
+                SectionedAdapter(this, R.layout.header_section, R.id.section_header, adapter);
+        mSectionedAdapter.setSections(sections.toArray(dummy));
+
+        mView.setAdapter(mSectionedAdapter);
+        mView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    //Fetch the courses associated with the professor
     private void getCoursesProfessor() {
         mDB_Professor.addValueEventListener(new ValueEventListener() {
             @Override
@@ -164,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-
+    //Fetch classes associated with all the professor courses
     private void getClassesProfessor(final ArrayList<Course_Class> courses) {
 
         mDatabase = FirebaseDatabase.getInstance().getReference("courses/course/");
@@ -173,13 +196,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Disciplines> ucs = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
+                    //Saves time but not needed
                     if (containsId(courses, postSnapshot.getKey())) {
 
                         for (int i = 0; i < courses.size(); i++) {
                             for (DataSnapshot postpostSnap : postSnapshot.child("ucs").getChildren()) {
-                               if (courses.get(i).getClass_id().equals(postpostSnap.getKey()) && courses.get(i).getCourse_id().toString().equals(postSnapshot.getKey())) {
-                                  String name, year, tag, id;
+                                if (courses.get(i).getClass_id().equals(postpostSnap.getKey()) && courses.get(i).getCourse_id().toString().equals(postSnapshot.getKey())) {
+                                    String name, year, tag, id;
                                     name = postpostSnap.child("name").getValue().toString();
                                     year = postpostSnap.child("year").getValue().toString();
                                     tag = postpostSnap.child("short").getValue().toString();
@@ -212,28 +235,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
-    private void initRecycleStudent(ArrayList<Disciplines> ucs, int cnt1, int cnt2) {
-        Collections.sort(ucs, new CustomCompareDiscipline());
-
-        mView = findViewById(R.id.recycler_class);
-        AdapterStudent adapter = new AdapterStudent(ucs, this);
-
-        //Criar
-        List<SectionedAdapter.Section> sections =
-                new ArrayList<>();
-
-        sections.add(new SectionedAdapter.Section(0, "1st Year"));
-        sections.add(new SectionedAdapter.Section(cnt1, "2nd Year"));
-        sections.add(new SectionedAdapter.Section(cnt2 + cnt1, "3rd Year"));
-        SectionedAdapter.Section[] dummy = new SectionedAdapter.Section[sections.size()];
-        SectionedAdapter mSectionedAdapter = new
-                SectionedAdapter(this, R.layout.header_section, R.id.section_header, adapter);
-        mSectionedAdapter.setSections(sections.toArray(dummy));
-
-        mView.setAdapter(mSectionedAdapter);
-        mView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
     private void initRecycleProfessor(ArrayList<Disciplines> ucs) {
         Collections.sort(ucs, new CustomCompareDiscipline());
 
@@ -253,11 +254,150 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    // My Favorites --------------------------------------------------------------------------------
+
+    private void getFav() {
+        DatabaseReference mDB_Fav = FirebaseDatabase.getInstance().getReference("users_fav").child(UserID);
+
+        mDB_Fav.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Favorite> favorites = new ArrayList<>();
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Favorite favorite = new Favorite(postSnapshot.child("tag").getValue().toString(), postSnapshot.child("id").getValue().toString());
+                    favorites.add(favorite);
+                }
+                getFavCourseStudent(favorites);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    private void getFavCourseStudent(final ArrayList<Favorite> favorites) {
+        mDB_Student.child(UserID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                getFavClassesStudent(dataSnapshot.child("course_id").getValue().toString(), favorites);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getFavClassesStudent(String course, final ArrayList<Favorite> favorites) {
+        mDatabase = FirebaseDatabase.getInstance().getReference("courses/course/" + course + "/ucs");
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int cnt1 = 0, cnt2 = 0, cnt3 = 0;
+                ArrayList<Disciplines> ucs = new ArrayList<Disciplines>();
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    String name, year, tag, id;
+                    for (int i = 0; i < favorites.size(); i++) {
+                        if (favorites.get(i).getId().equals(postSnapshot.getKey()) && favorites.get(i).getTag().equals(postSnapshot.child("short").getValue().toString())) {
+                            name = postSnapshot.child("name").getValue().toString();
+                            year = postSnapshot.child("year").getValue().toString();
+                            tag = postSnapshot.child("short").getValue().toString();
+                            id = postSnapshot.getKey().toString();
+                            if (postSnapshot.child("year").getValue().toString().equals("1")) {
+                                cnt1++;
+
+                            }
+                            if (postSnapshot.child("year").getValue().toString().equals("2")) {
+                                cnt2++;
+                            }
+                            if (postSnapshot.child("year").getValue().toString().equals("3")) {
+                                cnt3++;
+                            }
+                            Disciplines uc = new Disciplines(name, year, tag, id);
+                            ucs.add(uc);
+                            break;
+                        }
+                    }
+                }
+                initRecycleFavorite(ucs, cnt1, cnt2, cnt3);
+                mDatabase.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    private void initRecycleFavorite(ArrayList<Disciplines> ucs, int cnt1, int cnt2, int cnt3) {
+        Collections.sort(ucs, new CustomCompareDiscipline());
+
+        mView = findViewById(R.id.recycler_class);
+        AdapterStudent adapter = new AdapterStudent(ucs, this);
+
+        List<SectionedAdapter.Section> sections =
+                new ArrayList<>();
+
+        /*
+        Combinations possible with favorites
+        Creates sections as needed
+         */
+
+        //111
+        if (cnt1 > 0 && cnt2 > 0 && cnt3 > 0) {
+            sections.add(new SectionedAdapter.Section(0, "1st Year"));
+            sections.add(new SectionedAdapter.Section(cnt1, "2nd Year"));
+            sections.add(new SectionedAdapter.Section(cnt2 + cnt1, "3rd Year"));
+        }
+        //110
+        if (cnt1 > 0 && cnt2 > 0 && cnt3 == 0) {
+            sections.add(new SectionedAdapter.Section(0, "1st Year"));
+            sections.add(new SectionedAdapter.Section(cnt1, "2nd Year"));
+        }
+        //101
+        if (cnt1 > 0 && cnt2 == 0 && cnt3 > 0) {
+            sections.add(new SectionedAdapter.Section(0, "1st Year"));
+            sections.add(new SectionedAdapter.Section(cnt1, "3rd Year"));
+        }
+        //100
+        if (cnt1 > 0 && cnt2 == 0 && cnt3 == 0) {
+            sections.add(new SectionedAdapter.Section(0, "1st Year"));
+        }
+        //011
+        if (cnt1 == 0 && cnt2 > 0 && cnt3 > 0) {
+            sections.add(new SectionedAdapter.Section(0, "2nd Year"));
+            sections.add(new SectionedAdapter.Section(cnt2, "3rd Year"));
+        }
+
+        //010
+        if (cnt1 == 0 && cnt2 > 0 && cnt3 == 0) {
+            sections.add(new SectionedAdapter.Section(0, "2nd Year"));
+        }
+        //001
+        if (cnt1 == 0 && cnt2 == 0 && cnt3 > 0) {
+            sections.add(new SectionedAdapter.Section(0, "3rd Year"));
+        }
+
+        SectionedAdapter.Section[] dummy = new SectionedAdapter.Section[sections.size()];
+        SectionedAdapter mSectionedAdapter = new
+                SectionedAdapter(this, R.layout.header_section, R.id.section_header, adapter);
+        mSectionedAdapter.setSections(sections.toArray(dummy));
+
+        mView.setAdapter(mSectionedAdapter);
+        mView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
     private void setNavigationViewListener() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -313,7 +453,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void sendtoFav() {
-        //send to favorites
+        getFav();
     }
 
     private void sendtoNotes() {

@@ -12,13 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,9 +32,8 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    //EditText
+    //Elements
     private TextView title, message;
-    //Button
     private Switch readS;
     //Firebase
     private DatabaseReference mDatabase, mDB_Notes;
@@ -46,19 +41,18 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
     private FirebaseUser user;
     //Variables
     private String TAG = "NoteViewLog";
-    private String UserID, discipline, disc_key, note_key,read;
+    private String UserID, note_key,read;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_view);
+        //Check for Extras
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
             note_key = intent.getStringExtra("ID");
             read= intent.getStringExtra("Read");
-
-
         } else {
              /*
               This page needs to inherit information about the discipline selected
@@ -75,12 +69,26 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(R.string.action_send_note);
+        getSupportActionBar().setTitle(R.string.view_note);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Database Ref
         mDatabase = FirebaseDatabase.getInstance().getReference("notes_read").child(note_key);
+        //Database Structure
+        /*
+        Notes_read
+        |___Note ID
+            |___Content (UserID = false or true)
+         */
         mDB_Notes = FirebaseDatabase.getInstance().getReference("notes");
+        //Database Structure
+        /*
+        Note
+        |___UserID
+            |___NoteID
+                |___Content
+         */
+
         //User
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -89,7 +97,9 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
         readS = findViewById(R.id.seen_note);
         title = findViewById(R.id.title_note);
         message = findViewById(R.id.message_note);
+        //Fetch note data
         getNote();
+        //If the note is read sets the slider button to checked
         if(TextUtils.equals(read,"true"))
         {
             readS.setChecked(true);
@@ -109,11 +119,9 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
 
     private void getNote() {
         mDB_Notes.addValueEventListener(new ValueEventListener() {
-
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Notes> notes = new ArrayList<>();
-
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     for (DataSnapshot postpostSnap : postSnapshot.getChildren()) {
                         if (postpostSnap.getKey().equals(note_key)) {
@@ -123,31 +131,24 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
                     }
                 }
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
-
     }
-
+    //Toolbar --------------------------------------------------------------------------------------
     private void setNavigationViewListener() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.navigation_menu, menu);
         return true;
     }
-
-
+    // Handle navigation view item clicks here.
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
         switch (item.getItemId()) {
             case R.id.nav_home:
                 sendtoHome();
@@ -187,41 +188,69 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
+
     private void sendtoHome() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
+        //Redirects to Home screen
         Intent intent = new Intent(NoteViewActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
     }
 
     private void sendtoFav() {
-        //send to favorites
-    }
+
+        //Redirects to Home screen with a request to show Favorite Disciplines
+        Intent intent = new Intent(NoteViewActivity.this, HomeActivity.class);
+        intent.putExtra("Favorite_request",true);
+        startActivity(intent);
+        finish();    }
 
     private void sendtoNotes() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         //Send to my notes
     }
 
     private void sendtoTickets() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         //Send to my tickets
     }
 
     private void sendtoProfile() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
+        //Redirects to profile screen
         Intent intent = new Intent(NoteViewActivity.this, ProfileActivity.class);
         startActivity(intent);
     }
 
     private void sendtoSettings() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
+        //Redirects to Settings Screen
         Intent intent = new Intent(NoteViewActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
 
     private void sendtoLogin() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
+        //Removes Auth Token from the device
         mAuth.signOut();
+        //Redirects to Login screen
         Intent intent = new Intent(NoteViewActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
-
+    //Toolbar End ----------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
         super.onBackPressed();

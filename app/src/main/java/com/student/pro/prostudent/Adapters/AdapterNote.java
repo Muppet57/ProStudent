@@ -35,10 +35,12 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder> {
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("notes_read");
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user= mAuth.getCurrentUser();
-    private String UserID = user.getUid();
-    public AdapterNote(ArrayList<Notes> notes, Context mContext) {
+    private String UserID = user.getUid(),status;
+
+    public AdapterNote(ArrayList<Notes> notes, Context mContext,String status) {
         this.notes = notes;
         this.mContext = mContext;
+        this.status=status;
     }
 
     @Override

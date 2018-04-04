@@ -1,6 +1,7 @@
 package com.student.pro.prostudent.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.student.pro.prostudent.Activities.TicketViewActivity;
 import com.student.pro.prostudent.Objects.Tickets;
 import com.student.pro.prostudent.Objects.Users;
 import com.student.pro.prostudent.R;
@@ -28,14 +30,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class AdapterTicket extends RecyclerView.Adapter<AdapterTicket.ViewHolder> {
-    private static final String TAG = "ticketstest";
+    private static final String TAG = "AdapterTicketLog";
+    private String status;
     private ArrayList<Tickets> tickets = new ArrayList<>();
     private Context mContext;
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
 
-    public AdapterTicket(ArrayList<Tickets> tickets, Context mContext) {
+    public AdapterTicket(ArrayList<Tickets> tickets, Context mContext, String status) {
         this.tickets = tickets;
         this.mContext = mContext;
+        this.status=status;
     }
 
 
@@ -69,6 +73,21 @@ public class AdapterTicket extends RecyclerView.Adapter<AdapterTicket.ViewHolder
             }
         });
         holder.ticket_title.setText(tickets.get(position).getTitle());
+
+        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, TicketViewActivity.class);
+                Log.d(TAG, tickets.get(position).getTicket_id());
+                intent.putExtra("TicketID",tickets.get(position).getTicket_id());
+                intent.putExtra("UserID",tickets.get(position).getUser_id());
+                intent.putExtra("Message",tickets.get(position).getContent());
+                intent.putExtra("Date",tickets.get(position).getDate());
+                intent.putExtra("Title",tickets.get(position).getTitle());
+                intent.putExtra("Status",status);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override

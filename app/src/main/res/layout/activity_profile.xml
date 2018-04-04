@@ -5,7 +5,7 @@
     android:id="@+id/drawerlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryLight"
+    android:background="@color/colorPrimaryDark"
     tools:context="com.student.pro.prostudent.Activities.ProfileActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/default_user"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorAccent"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,9 +53,11 @@
 
         <ScrollView
             android:id="@+id/scrollView4"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
             android:layout_marginTop="16dp"
             app:layout_constraintBottom_toTopOf="@+id/profile_save"
             app:layout_constraintEnd_toEndOf="parent"
@@ -65,28 +67,27 @@
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/linearLayout3"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <Button
                     android:id="@+id/but_email"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="82dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/ic_action_edit"
+                    app:layout_constraintBottom_toBottomOf="@+id/switch_email"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_email"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/switch_email" />
 
                 <TextView
                     android:id="@+id/tag_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/prompt_email"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryLight"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -94,9 +95,11 @@
 
                 <ViewSwitcher
                     android:id="@+id/switch_email"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="32dp"
                     android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/but_email"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tag_email">
 
@@ -105,10 +108,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_email"
                         android:inputType="textEmailAddress"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColorHint="@color/colorSecondaryDark"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteY="53dp" />
 
@@ -116,12 +119,14 @@
                         android:id="@+id/profile_email2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryLightTransparent"
+
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_email"
                         android:inputType="textEmailAddress"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColor="@color/colorPrimaryLight"
+                        android:textColorHint="@color/colorSecondaryDarkTransparent"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteX="46dp"
                         tools:layout_editor_absoluteY="307dp" />
@@ -133,9 +138,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/prompt_username"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryLight"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -145,18 +150,19 @@
                     android:id="@+id/but_user"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="81dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/ic_action_edit"
+                    app:layout_constraintBottom_toBottomOf="@+id/switch_username"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_username"
-                    app:layout_constraintTop_toBottomOf="@+id/but_email" />
+                    app:layout_constraintTop_toTopOf="@+id/switch_username" />
 
                 <ViewSwitcher
                     android:id="@+id/switch_username"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="32dp"
                     android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/but_user"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tag_username">
 
@@ -165,11 +171,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_username"
                         android:inputType="text"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColorHint="@color/colorSecondaryDark"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteY="150dp" />
 
@@ -177,12 +182,14 @@
                         android:id="@+id/profile_username2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryLightTransparent"
+
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_username"
                         android:inputType="text"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColor="@color/colorPrimaryLight"
+                        android:textColorHint="@color/colorSecondaryDarkTransparent"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteY="150dp" />
 
@@ -193,9 +200,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/prompt_name"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryLight"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -205,18 +212,19 @@
                     android:id="@+id/but_name"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="82dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/ic_action_edit"
+                    app:layout_constraintBottom_toBottomOf="@+id/switch_name"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_name"
-                    app:layout_constraintTop_toBottomOf="@+id/but_user" />
+                    app:layout_constraintTop_toTopOf="@+id/switch_name" />
 
                 <ViewSwitcher
                     android:id="@+id/switch_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="32dp"
                     android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/but_name"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tag_name">
 
@@ -225,11 +233,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_name"
                         android:inputType="none|textPersonName"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColorHint="@color/colorSecondaryDark"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteY="248dp" />
 
@@ -237,12 +244,14 @@
                         android:id="@+id/profile_name2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryLightTransparent"
+
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_name"
                         android:inputType="none|textPersonName"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColor="@color/colorPrimaryLight"
+                        android:textColorHint="@color/colorSecondaryDarkTransparent"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteY="248dp" />
                 </ViewSwitcher>
@@ -252,9 +261,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/prompt_surname"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryLight"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -264,20 +273,19 @@
                     android:id="@+id/but_surname"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:layout_marginBottom="215dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="81dp"
+                    android:layout_marginTop="8dp"
                     android:background="@drawable/ic_action_edit"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/switch_surname"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/switch_surname"
-                    app:layout_constraintTop_toBottomOf="@+id/but_name" />
+                    app:layout_constraintTop_toTopOf="@+id/switch_surname" />
 
                 <ViewSwitcher
                     android:id="@+id/switch_surname"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="32dp"
                     android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/but_surname"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tag_surname">
 
@@ -286,11 +294,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_surname"
                         android:inputType="none|textPersonName"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColorHint="@color/colorSecondaryDark"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteY="345dp" />
 
@@ -298,12 +305,14 @@
                         android:id="@+id/profile_surname2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+
+                        android:backgroundTint="@color/colorPrimaryLightTransparent"
                         android:ems="10"
-                        android:fontFamily="@font/poppins_light"
+                        android:fontFamily="@font/montserrat"
                         android:hint="@string/prompt_surname"
                         android:inputType="none|textPersonName"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textColorHint="@color/colorPrimaryDarkTransparent"
+                        android:textColor="@color/colorPrimaryLight"
+                        android:textColorHint="@color/colorSecondaryDarkTransparent"
                         android:textSize="16sp"
                         tools:layout_editor_absoluteY="345dp" />
                 </ViewSwitcher>
@@ -313,9 +322,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/change_pass"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryLight"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -323,31 +332,36 @@
 
                 <EditText
                     android:id="@+id/profile_password"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/colorPrimaryLightTransparent"
                     android:ems="10"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/montserrat"
                     android:hint="@string/prompt_new_pass"
                     android:inputType="none|textPassword"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textColorHint="@color/colorPrimaryLightTransparent"
                     android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="@+id/switch_surname"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tag-password" />
 
                 <EditText
                     android:id="@+id/profile_confirm_pass"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
                     android:layout_marginTop="16dp"
+                    android:backgroundTint="@color/colorPrimaryLightTransparent"
                     android:ems="10"
-                    android:fontFamily="@font/poppins_light"
+                    android:fontFamily="@font/montserrat"
                     android:hint="@string/prompt_confirm_password"
                     android:inputType="none|textPassword"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:textColorHint="@color/colorPrimaryLightTransparent"
                     android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/profile_password"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/profile_password" />
 

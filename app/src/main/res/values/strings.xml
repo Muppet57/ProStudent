@@ -19,7 +19,6 @@
     <string name="prompt_username">Username</string>
     <string name="prompt_name">Name</string>
     <string name="prompt_surname">Surname</string>
-    <string name="prompt_upload">Upload photo</string>
     <string name="prompt_avatar">Photo URL</string>
     <string name="prompt_confirm_password">Confirm Password</string>
     <string name="prompt_confirm_email">Confirm Email</string>
@@ -60,6 +59,7 @@
     <string name="prompt_title">Title here</string>
     <string name="label_Message">Message :</string>
     <string name="action_send_note">Create Note</string>
+    <string name="view_note">Note</string>
     <string name="prompt_message">Enter a short message.</string>
 
     <!-- Strings related to toolbar-->
@@ -68,14 +68,29 @@
     <string name="navigation_header">Navigation Header</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="title_profile">Profile</string>
-    <string name="title_class">Favorites</string>
+    <!-- Menu Items -->
     <string name="title_home">Home</string>
+    <string name="title_class">Favorites</string>
     <string name="title_my_tickets">My Tickets</string>
     <string name="title_my_notes">My Notes</string>
-
+    <string name="title_profile">Profile</string>
     <string name="title_settings">Settings</string>
     <string name="title_logout">Log out</string>
-    <string name="title_activity_main">MainActivity</string>
+
+    <!-- Toasts & Other Messages -->
+    <string name="load_profile">User profile Loaded succesfuly</string>
+    <string name="select_img">Select an Image</string>
+    <string name="upload_progress">Uploading...</string>
+    <string name="upload_success">Photo uploaded</string>
+    <string name="upload_failed">Upload failed</string>
+    <string name="upload_sent">Uploaded</string>
+    <string name="authenticating">Authenticating...</string>
+    <string name="password_failed_2">Authentication Failed. Your password was not updated</string>
+    <string name="password_success">Password Succesfuly updated</string>
+    <string name="password_failed">Something went wrong. Your password was not updated. Please try again</string>
+    <string name="email_failed_2">Authentication Failed. Your Email was not updated</string>
+    <string name="email_success">Email Succesfuly updated</string>
+    <string name="email_failed">Something went wrong. Your Email was not updated. Please try again</string>
+
 
 </resources>

@@ -91,6 +91,7 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
                 Intent intent = new Intent(mContext, ClassActivity.class);
                 intent.putExtra("Discipline", ucs.get(position).getTag().toString());
                 intent.putExtra("ID", ucs.get(position).getId().toString());
+                intent.putExtra("Status","student");
                 mContext.startActivity(intent);
             }
         });

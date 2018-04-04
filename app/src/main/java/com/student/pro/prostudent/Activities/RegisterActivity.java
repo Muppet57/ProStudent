@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,31 +20,31 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.IgnoreExtraProperties;
 import com.student.pro.prostudent.Objects.Users;
 import com.student.pro.prostudent.R;
 
 public class RegisterActivity extends AppCompatActivity {
+    //Elements
     private EditText usernameText, emailText, email_confirmText, passText, pass_confirmText, nameText, surnameText;
     private Button confirmBut;
-    private String TAG = "Tentativa";
     private ProgressBar registerprogress;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-
+    //Firebase
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-
+    //Variables
+    private String TAG = "RegisterLog";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
+        //User
         mAuth = FirebaseAuth.getInstance();
-
+        //Instances
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
-
+        //Elements
         usernameText = findViewById(R.id.reg_username);
         emailText = findViewById(R.id.reg_email);
         email_confirmText = findViewById(R.id.reg_confirm_email);
@@ -118,7 +117,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, R.string.authentication_failed, Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }
@@ -134,6 +133,8 @@ public class RegisterActivity extends AppCompatActivity {
     private void sendtoHome() {
         Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
         startActivity(intent);
+        Toast.makeText(RegisterActivity.this, R.string.authentication_success, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override

@@ -31,11 +31,9 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    //EditText
+    //Elements
     private EditText title, message;
-    //Button
     private Button sendBut;
-    //ProgressBar
     private ProgressBar note_bar;
     //Firebase
     private DatabaseReference mDatabase;
@@ -50,6 +48,7 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notes);
 
+        //Check For Extras
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -95,29 +94,40 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void sendNote() {
+        //Set progress bar Visible
         note_bar.setVisibility(View.VISIBLE);
 
         String ititle, icontent, idate;
+        //Check for valid Inputs
         if (!title.getText().toString().isEmpty() && !message.getText().toString().isEmpty()) {
+
+            //Get current system date
             Date currentDate = Calendar.getInstance().getTime();
+            //Define date format
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            //Parse date to defined format
             idate = sdf.format(currentDate).toString();
+            //Get user input
             ititle = title.getText().toString();
             icontent = message.getText().toString();
-            Notes ticket = new Notes(ititle, icontent, discipline, disc_key, idate);
-            mDatabase.child(UserID).push().setValue(ticket);
+            //Instantiate Notes Object
+            Notes note = new Notes(ititle, icontent, discipline, disc_key, idate);
+            //Push new key under current user and set Note value
+            mDatabase.child(UserID).push().setValue(note);
+            //Set progress bar invisible
             note_bar.setVisibility(View.INVISIBLE);
+            //Finish activity
             finish();
         }
 
     }
-
+    //Toolbar --------------------------------------------------------------------------------------
     private void setNavigationViewListener() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-
+    //Inflate custom Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.navigation_menu, menu);
@@ -125,6 +135,7 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    //Menu Item click management
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
@@ -174,7 +185,11 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void sendtoFav() {
-        //send to favorites
+        //Redirects to Home screen with a request to show Favorite Disciplines
+        Intent intent = new Intent(NoteActivity.this, HomeActivity.class);
+        intent.putExtra("Favorite_request",true);
+        startActivity(intent);
+        finish();
     }
 
     private void sendtoNotes() {
@@ -201,7 +216,7 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
         finish();
     }
-
+    //Toolbar End-----------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
         super.onBackPressed();

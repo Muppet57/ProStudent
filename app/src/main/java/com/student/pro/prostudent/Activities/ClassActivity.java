@@ -1,6 +1,9 @@
 package com.student.pro.prostudent.Activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,25 +38,42 @@ import com.student.pro.prostudent.R;
 import java.util.ArrayList;
 
 public class ClassActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    //Toolbar
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-
+    //Firebase
     private DatabaseReference mDB_Disciplines, mDB_Notes, mDB_Tickets;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-
-    private String user_id, discipline, disc_key,status;
-    private String TAG = "ticketstest";
-
+    //Variables
+    private String user_id, discipline, disc_key, status;
+    private String TAG = "ClassLog";
+    //Elements
     private RecyclerView mRecyclerNotes, mRecyclerTickets;
     private AdapterTicket adapter;
     private Button ticket_add, note_add;
+
+    /*
+    Broadcast to finish activity from another activity when navigating to other pages via the Hamburguer menu
+    therefore breaking the current navigation path
+     */
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals("finish_class")) {
+                finish();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
+        registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         //Check for required extras
         Intent intent = getIntent();
@@ -117,12 +137,9 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                 startActivity(intent);
             }
         });
-        if(TextUtils.equals(status,"professor"))
-        {
+        if (TextUtils.equals(status, "professor")) {
             ticket_add.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             note_add.setVisibility(View.GONE);
         }
     }
@@ -138,7 +155,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                            A "security" check is done to confirm the Discipline authenticity against
                            the database with both ID and TAG
                            We could use the inherited ID from the previous page, but since we need to perform
-                           this step we will use the ID retrieved from the , because this way we can avoid
+                           this step we will use the ID retrieved from the database, because this way we can avoid
                            checking if the result was positive and just keep going.
                          */
                         disc_key = postsnapshot.getKey();
@@ -195,7 +212,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
         mRecyclerNotes = findViewById(R.id.notes_recyler);
         // Collections.sort(notes,new CustomCompareNotes());
         // Creating our adapter which inherits our Array and context
-        AdapterNote adapter = new AdapterNote(notes, this);
+        AdapterNote adapter = new AdapterNote(notes, this, status);
 
         //Display message for an empty recycler
         TextView empty = findViewById(R.id.empty_view);
@@ -234,7 +251,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
                             Tickets ticket = new Tickets(ititle, icontent, iprivate,
                                     iuser_id, id_disc, tag_disc, idate, iurl);
-                            ticket.setTicket_id(postsnapshot.getKey());
+                            ticket.setTicket_id(postpostsnap.getKey());
                             tickets.add(ticket);
                         }
                 }
@@ -255,7 +272,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
         mRecyclerTickets = findViewById(R.id.tickets_recycler);
 
-        adapter = new AdapterTicket(tickets, this);
+        adapter = new AdapterTicket(tickets, this, status);
 
         if (adapter.getItemCount() == 0) {
             empty.setVisibility(View.VISIBLE);

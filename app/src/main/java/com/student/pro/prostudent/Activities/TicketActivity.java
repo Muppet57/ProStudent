@@ -45,18 +45,11 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    //ImageView
+   //Elements
     private ImageView attach;
-    // Image Path
-    private Uri filePath = null, imageURL = null;
-    private static int RESULT_LOAD_IMAGE = 2;
-    //EditText
     private EditText title, content;
-    //Button
     private Button sendBut;
-    //ProgressBar
     private ProgressBar ticket_bar;
-    //Switch
     private Switch sPrivate;
     //Firebase
     private StorageReference mStorageRef;
@@ -66,12 +59,15 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
     //Variables
     private String TAG = "Ticketlog";
     private String UserID, discipline, disc_key, ticket_key;
+    private Uri filePath = null, imageURL = null;
+    private static int RESULT_LOAD_IMAGE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ticket);
 
+        //Check for Extras
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -97,9 +93,8 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
         getSupportActionBar().setTitle(R.string.action_send_ticket);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Database Ref
+        //Instances
         mDatabase = FirebaseDatabase.getInstance().getReference("tickets");
-        //Storage Ref
         mStorageRef = FirebaseStorage.getInstance().getReference("tickets");
         //User
         mAuth = FirebaseAuth.getInstance();
@@ -130,7 +125,8 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), RESULT_LOAD_IMAGE);
+        String mystring = this.getResources().getString(R.string.select_img).toString();
+        startActivityForResult(Intent.createChooser(intent, mystring), RESULT_LOAD_IMAGE);
     }
 
     @Override
@@ -140,7 +136,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
                 && data != null && data.getData() != null) {
             filePath = data.getData();
             try {
-                //Atualiza a foto de perfil na app
+                //Updates profile picture on screen
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
                 attach.setImageBitmap(bitmap);
 
@@ -150,20 +146,18 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
-    //Upload de Imagem para a FireStorage
+    //Upload to FireStorage
     private void uploadImage() {
         ticket_key = mDatabase.child(UserID).push().getKey();
 
-        //Verifica se o ficheiro foi escolhido
+        //Checks if file was selected
         if (filePath != null) {
-            //Inicialização de caixa de progresso de upload
             final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
+            progressDialog.setTitle(R.string.upload_progress);
             progressDialog.show();
             /*
-            Incio do upload
-            Imagem é guardada na pasta tickets com o nome (ticket_key.jpg)
-            Após a tarefa ser concluida (com ou sem sucessso) a caixa de progresso é dispensada
+            Image is saved on the folder "tickets" with the name (ticket_key.jpg)
+            Dialog is dismissed when the task ends
              */
             StorageReference ref = mStorageRef.child("tickets/" + ticket_key + ".jpg");
             ref.putFile(filePath)
@@ -172,7 +166,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             ticket_bar.setVisibility(View.VISIBLE);
                             imageURL = taskSnapshot.getDownloadUrl();
-                            Toast.makeText(TicketActivity.this, "Image Uploaded",
+                            Toast.makeText(TicketActivity.this, R.string.upload_success,
                                     Toast.LENGTH_SHORT).show();
                             progressDialog.dismiss();
                             sendTicket();
@@ -182,7 +176,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(TicketActivity.this, "Upload Failed " + e.getMessage(),
+                            Toast.makeText(TicketActivity.this, R.string.upload_failed +" - "+ e.getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -191,7 +185,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                            progressDialog.setMessage(R.string.upload_sent + (int) progress + "%");
                         }
                     });
         } else {
@@ -218,7 +212,6 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
             } else {
                 iprivate = "false";
             }
-            Log.d(TAG, "sendTicket: " + iurl);
             Tickets ticket = new Tickets(ititle, icontent, iprivate, UserID, disc_key, discipline, idate, iurl);
             mDatabase.child(UserID).push().setValue(ticket);
             ticket_bar.setVisibility(View.INVISIBLE);
