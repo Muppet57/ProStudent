@@ -1,12 +1,18 @@
 package com.student.pro.prostudent.Activities;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,23 +24,50 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.student.pro.prostudent.R;
 
 public class LoginActivity extends AppCompatActivity {
 
     //Elements
     private Button login, register;
-    private String TAG = "Login", email, pass;
+    private String TAG = "Loginlog", email, pass, UserID;
+    private String[] currentStatus = new String[1];
     private EditText emailText, passText;
     private ProgressBar loginprogress;
     //Firebase
     private FirebaseAuth mAuth;
 
+    private DatabaseReference mDB_User;
+
+    private BroadcastReceiver broadcastReceiver;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        broadcastReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context arg0, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals("finish_login")) {
+                    finish();
+                }
+            }
+        };
+        registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
 
         //User
         mAuth = FirebaseAuth.getInstance();
@@ -98,6 +131,28 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    //Retrieve User status
+    private void getStatus() {
+        mDB_User.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue().toString().equals("student")) {
+                    currentStatus[0] = "student";
+
+                } else {
+                    currentStatus[0] = "professor";
+
+                }
+                sendtoHome();
+                mDB_User.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
     //If the token is present at the start of the activity the user is automatically logged in
     @Override
     protected void onStart() {
@@ -137,19 +192,48 @@ public class LoginActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
-            sendtoHome();
+            UserID = currentUser.getUid();
+            mDB_User = FirebaseDatabase.getInstance().getReference("users").child(UserID).child("status");
+            getStatus();
         }
     }
 
     private void sendtoHome() {
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-        startActivity(intent);
-        finish();
+        Intent intent =null;
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String mPref = sharedPref.getString("home_list", "0");
+        if(currentStatus[0].equals("student"))
+        {
+            Log.d(TAG, "sendtoHome: " + mPref.toString());
+            switch (mPref) {
+                case "0":
+                    intent= new Intent(LoginActivity.this, HomeActivity.class);
+                    break;
+                case "1":
+                    intent= new Intent(LoginActivity.this, FavoritesActivity.class);
+                    break;
+                case "2":
+                    intent= new Intent(LoginActivity.this, MyTicketsActivity.class);
+                    break;
+            }
+            intent.putExtra("Status",currentStatus[0].toString());
+            startActivity(intent);
+            finish();
+        }
+        else
+        {
+            intent= new Intent(LoginActivity.this, HomeActivity.class);
+            intent.putExtra("Status",currentStatus[0].toString());
+            startActivity(intent);
+            finish();
+        }
+
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
+        //Ask to close
     }
 }

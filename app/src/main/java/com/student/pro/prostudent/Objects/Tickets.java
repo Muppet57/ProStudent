@@ -16,9 +16,10 @@ public class Tickets {
     private String ticket_id;
     private String response;
     private String response_date;
+    private String solved;
 
 
-    public Tickets(String title, String content, String sprivate, String user_id, String id_disc, String tag_disc, String date, String url) {
+    public Tickets(String title, String content, String sprivate, String user_id, String id_disc, String tag_disc, String date, String url,String solved) {
         this.title = title;
         this.content = content;
         this.sprivate = sprivate;
@@ -27,11 +28,16 @@ public class Tickets {
         this.tag_disc = tag_disc;
         this.date = date;
         this.url = url;
+        this.solved=solved;
     }
 
     public Tickets(String response, String response_date) {
         this.response = response;
         this.response_date = response_date;
+    }
+
+    public String getSolved() {
+        return solved;
     }
 
     public String getTitle() {

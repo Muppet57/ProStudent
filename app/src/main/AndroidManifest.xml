@@ -21,45 +21,46 @@
         <activity
             android:name=".Activities.LoginActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".Activities.RegisterActivity"
             android:label="@string/action_create_account"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Activities.ProfileActivity"
             android:label="@string/title_profile"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Activities.HomeActivity"
             android:label="@string/title_home"
-            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Activities.MyTicketsActivity"
+            android:label="@string/title_home"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Activities.MyNotesActivity"
+            android:label="@string/title_home"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Activities.FavoritesActivity"
+            android:label="@string/title_favorites"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.TicketActivity"
             android:label="@string/title_new_ticket"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.ClassActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.NoteActivity"
             android:label="@string/action_send_note"
-            android:screenOrientation="portrait" />
+             />
         <activity
             android:name=".Activities.TicketViewActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <meta-data
@@ -69,7 +70,17 @@
         <activity android:name=".Activities.NoteViewActivity" />
         <activity
             android:name=".Activities.SettingsActivity"
-            android:label="@string/title_activity_settings2"></activity>
+            android:label="@string/title_activity_settings" />
+        <activity android:name=".Activities.SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activities.SettingsActivityProfessorProfessor"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

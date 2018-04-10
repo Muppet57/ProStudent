@@ -3,8 +3,5 @@
     <array name="preloaded_fonts" translatable="false">
         <item>@font/montserrat</item>
         <item>@font/montserrat_bold</item>
-        <item>@font/pathway_gothic_one</item>
-        <item>@font/poppins_light</item>
-        <item>@font/poppins_semibold</item>
     </array>
 </resources>

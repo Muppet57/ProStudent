@@ -159,7 +159,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
             Image is saved on the folder "tickets" with the name (ticket_key.jpg)
             Dialog is dismissed when the task ends
              */
-            StorageReference ref = mStorageRef.child("tickets/" + ticket_key + ".jpg");
+            StorageReference ref = mStorageRef.child(ticket_key + ".jpg");
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -212,7 +212,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
             } else {
                 iprivate = "false";
             }
-            Tickets ticket = new Tickets(ititle, icontent, iprivate, UserID, disc_key, discipline, idate, iurl);
+            Tickets ticket = new Tickets(ititle, icontent, iprivate, UserID, disc_key, discipline, idate, iurl,"false");
             mDatabase.child(UserID).push().setValue(ticket);
             ticket_bar.setVisibility(View.INVISIBLE);
             finish();

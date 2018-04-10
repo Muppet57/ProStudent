@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -41,7 +42,7 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
     private FirebaseUser user;
     //Variables
     private String TAG = "NoteViewLog";
-    private String UserID, note_key,read;
+    private String UserID, note_key,read,status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
         if (extras != null) {
             note_key = intent.getStringExtra("ID");
             read= intent.getStringExtra("Read");
+            status=intent.getStringExtra("Status");
         } else {
              /*
               This page needs to inherit information about the discipline selected
@@ -100,21 +102,29 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
         //Fetch note data
         getNote();
         //If the note is read sets the slider button to checked
-        if(TextUtils.equals(read,"true"))
+        if(status.equals("student"))
+        { if(TextUtils.equals(read,"true"))
         {
             readS.setChecked(true);
         }
-        readS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    mDatabase.child(UserID).setValue("true");
-                } else {
-                    mDatabase.child(UserID).removeValue();
+            readS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                    if (isChecked) {
+                        mDatabase.child(UserID).setValue("true");
+                    } else {
+                        mDatabase.child(UserID).removeValue();
 
+                    }
                 }
-            }
-        });
+            });
+
+        }
+        else
+        {
+            readS.setVisibility(View.GONE);
+        }
+
     }
 
     private void getNote() {

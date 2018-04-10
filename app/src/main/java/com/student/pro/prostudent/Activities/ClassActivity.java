@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,11 +33,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.student.pro.prostudent.Adapters.AdapterNote;
 import com.student.pro.prostudent.Adapters.AdapterTicket;
+import com.student.pro.prostudent.Comparators.CustomCompareNotes;
 import com.student.pro.prostudent.Objects.Notes;
 import com.student.pro.prostudent.Objects.Tickets;
 import com.student.pro.prostudent.R;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class ClassActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     //Toolbar
@@ -44,6 +49,8 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     private Toolbar mToolbar;
     //Firebase
     private DatabaseReference mDB_Disciplines, mDB_Notes, mDB_Tickets;
+    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("notes_read");
+
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     //Variables
@@ -58,22 +65,33 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     Broadcast to finish activity from another activity when navigating to other pages via the Hamburguer menu
     therefore breaking the current navigation path
      */
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver broadcastReceiver;
 
-        @Override
-        public void onReceive(Context arg0, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals("finish_class")) {
-                finish();
-            }
-        }
-    };
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+        Log.d(TAG, "onDestroy:");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class);
-        registerReceiver(broadcastReceiver, new IntentFilter("finish_activity"));
+        Log.d(TAG, "onCreate: ");
+        broadcastReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context arg0, Intent intent) {
+                Log.d(TAG, "RECEIVED");
+                String action = intent.getAction();
+                if (action.equals("finish_class")) {
+                    Log.d(TAG, "onReceive: I was finished");
+                    finish();
+                }
+            }
+        };
+        registerReceiver(broadcastReceiver, new IntentFilter("finish_class"));
 
         //Check for required extras
         Intent intent = getIntent();
@@ -100,6 +118,18 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
         mToggle.syncState();
         getSupportActionBar().setTitle(discipline);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        if (status.equals("student")) {
+            NavigationView nav = findViewById(R.id.nav_view);
+            Menu menu = nav.getMenu();
+            menu.findItem(R.id.nav_notes).setVisible(false);
+
+        } else {
+            NavigationView nav = findViewById(R.id.nav_view);
+            Menu menu = nav.getMenu();
+            menu.findItem(R.id.nav_tickets).setVisible(false);
+            menu.findItem(R.id.nav_class).setVisible(false);
+        }
 
         //Current user
         mAuth = FirebaseAuth.getInstance();
@@ -172,11 +202,10 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
     //Retrieve the Notes data from the Database
     private void getNotes() {
+        final ArrayList<Notes> notes = new ArrayList<>();
         mDB_Notes.addValueEventListener(new ValueEventListener() {
-
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Notes> notes = new ArrayList<>();
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     String title, content, date, id_disc, tag_disc;
@@ -188,14 +217,12 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                             tag_disc = postpostSnap.child("tag_disc").getValue().toString();
                             id_disc = postpostSnap.child("id_disc").getValue().toString();
                             date = postpostSnap.child("date").getValue().toString();
-
                             Notes note = new Notes(title, content, tag_disc, id_disc, date);
                             note.setNote_id(postpostSnap.getKey());
                             notes.add(note);
                         }
                     }
                 }
-
                 initRecyclerNote(notes);
             }
 
@@ -208,6 +235,8 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
     //Initialize Notes Recycler View
     private void initRecyclerNote(ArrayList<Notes> notes) {
+
+        Collections.sort(notes, new CustomCompareNotes());
 
         mRecyclerNotes = findViewById(R.id.notes_recyler);
         // Collections.sort(notes,new CustomCompareNotes());
@@ -228,34 +257,70 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     }
 
     private void getTickets() {
-        Log.d(TAG, "getTickets:");
         mDB_Tickets.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Tickets> tickets = new ArrayList<>();
 
                 for (DataSnapshot postsnapshot : dataSnapshot.getChildren()) {
-                    String ititle, icontent, iuser_id, iprivate, idate, id_disc, tag_disc, iurl, ticket_id;
+                    String ititle, icontent, iuser_id, iprivate, idate, id_disc, tag_disc, iurl, ticket_id,isolved;
                     for (DataSnapshot postpostsnap : postsnapshot.getChildren())
-
-                        if (disc_key.equals(postpostsnap.child("id_disc").getValue().toString()) &&
-                                discipline.equals(postpostsnap.child("tag_disc").getValue().toString())) {
-                            ititle = postpostsnap.child("title").getValue().toString();
-                            icontent = postpostsnap.child("content").getValue().toString();
-                            iprivate = postpostsnap.child("sprivate").getValue().toString();
-                            iuser_id = postpostsnap.child("user_id").getValue().toString();
-                            tag_disc = postpostsnap.child("tag_disc").getValue().toString();
-                            id_disc = postpostsnap.child("id_disc").getValue().toString();
-                            idate = postpostsnap.child("date").getValue().toString();
-                            iurl = postpostsnap.child("url").getValue().toString();
-
-                            Tickets ticket = new Tickets(ititle, icontent, iprivate,
-                                    iuser_id, id_disc, tag_disc, idate, iurl);
-                            ticket.setTicket_id(postpostsnap.getKey());
-                            tickets.add(ticket);
+                        if (status.equals("professor")) {
+                            if (disc_key.equals(postpostsnap.child("id_disc").getValue().toString()) &&
+                                    discipline.equals(postpostsnap.child("tag_disc").getValue().toString())) {
+                                ititle = postpostsnap.child("title").getValue().toString();
+                                icontent = postpostsnap.child("content").getValue().toString();
+                                iprivate = postpostsnap.child("sprivate").getValue().toString();
+                                iuser_id = postpostsnap.child("user_id").getValue().toString();
+                                tag_disc = postpostsnap.child("tag_disc").getValue().toString();
+                                id_disc = postpostsnap.child("id_disc").getValue().toString();
+                                idate = postpostsnap.child("date").getValue().toString();
+                                iurl = postpostsnap.child("url").getValue().toString();
+                                isolved = postpostsnap.child("solved").getValue().toString();
+                                Tickets ticket = new Tickets(ititle, icontent, iprivate,
+                                        iuser_id, id_disc, tag_disc, idate, iurl,isolved);
+                                ticket.setTicket_id(postpostsnap.getKey());
+                                tickets.add(ticket);
+                            }
+                        } else {
+                            if (postpostsnap.child("sprivate").getValue().toString().equals("false")) {
+                                if (disc_key.equals(postpostsnap.child("id_disc").getValue().toString()) &&
+                                        discipline.equals(postpostsnap.child("tag_disc").getValue().toString())) {
+                                    ititle = postpostsnap.child("title").getValue().toString();
+                                    icontent = postpostsnap.child("content").getValue().toString();
+                                    iprivate = postpostsnap.child("sprivate").getValue().toString();
+                                    iuser_id = postpostsnap.child("user_id").getValue().toString();
+                                    tag_disc = postpostsnap.child("tag_disc").getValue().toString();
+                                    id_disc = postpostsnap.child("id_disc").getValue().toString();
+                                    idate = postpostsnap.child("date").getValue().toString();
+                                    iurl = postpostsnap.child("url").getValue().toString();
+                                    isolved = postpostsnap.child("solved").getValue().toString();
+                                    Tickets ticket = new Tickets(ititle, icontent, iprivate,
+                                            iuser_id, id_disc, tag_disc, idate, iurl,isolved);
+                                    ticket.setTicket_id(postpostsnap.getKey());
+                                    tickets.add(ticket);
+                                }
+                            } else if (postpostsnap.child("user_id").getValue().toString().equals(user_id) && postpostsnap.child("sprivate").getValue().toString().equals("true") ) {
+                                if (disc_key.equals(postpostsnap.child("id_disc").getValue().toString()) &&
+                                        discipline.equals(postpostsnap.child("tag_disc").getValue().toString())) {
+                                    ititle = postpostsnap.child("title").getValue().toString();
+                                    icontent = postpostsnap.child("content").getValue().toString();
+                                    iprivate = postpostsnap.child("sprivate").getValue().toString();
+                                    iuser_id = postpostsnap.child("user_id").getValue().toString();
+                                    tag_disc = postpostsnap.child("tag_disc").getValue().toString();
+                                    id_disc = postpostsnap.child("id_disc").getValue().toString();
+                                    idate = postpostsnap.child("date").getValue().toString();
+                                    iurl = postpostsnap.child("url").getValue().toString();
+                                    isolved = postpostsnap.child("solved").getValue().toString();
+                                    Tickets ticket = new Tickets(ititle, icontent, iprivate,
+                                            iuser_id, id_disc, tag_disc, idate, iurl,isolved);
+                                    ticket.setTicket_id(postpostsnap.getKey());
+                                    tickets.add(ticket);
+                                }
+                            }
                         }
+
                 }
-                Log.d(TAG, "onDataChange: GET TICKET DATACHANGE");
                 initRecyclerTicket(tickets);
             }
 
@@ -267,7 +332,6 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     }
 
     private void initRecyclerTicket(ArrayList<Tickets> tickets) {
-        Log.d(TAG, "initRecyclerTicket:");
         TextView empty = findViewById(R.id.empty_view_tickets);
 
         mRecyclerTickets = findViewById(R.id.tickets_recycler);
@@ -300,6 +364,18 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Management of navigation view item clicks.
         switch (item.getItemId()) {
+            case R.id.nav_home:
+                sendtoHome();
+                break;
+            case R.id.nav_class:
+                sendtoFav();
+                break;
+            case R.id.nav_notes:
+                sendtoNotes();
+                break;
+            case R.id.nav_tickets:
+                sendtoTickets();
+                break;
             case R.id.nav_account:
                 sendtoProfile();
                 break;
@@ -308,12 +384,6 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                 break;
             case R.id.nav_logout:
                 sendtoLogin();
-                break;
-            case R.id.nav_tickets:
-                sendtoTickets();
-                break;
-            case R.id.nav_home:
-                sendtoHome();
                 break;
 
         }
@@ -330,27 +400,28 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
         return super.onOptionsItemSelected(item);
     }
 
-    // This activity is to be destroyed on exiting
     private void sendtoHome() {
         Intent intent = new Intent(ClassActivity.this, HomeActivity.class);
+        intent.putExtra("Status",status);
         startActivity(intent);
         finish();
     }
-    // This activity is to be destroyed on exiting
 
-    private void sendtoLogin() {
-        Intent intent = new Intent(ClassActivity.this, LoginActivity.class);
+    private void sendtoFav() {
+        Intent intent = new Intent(ClassActivity.this, FavoritesActivity.class);
         startActivity(intent);
         finish();
     }
-    // This activity is to be destroyed on exiting
 
-    private void sendtoSettings() {
-        Intent intent = new Intent(ClassActivity.this, SettingsActivity.class);
+    private void sendtoNotes() {
+        //Send to my notes
+    }
+
+    private void sendtoTickets() {
+        Intent intent = new Intent(ClassActivity.this, MyTicketsActivity.class);
         startActivity(intent);
         finish();
     }
-    // This activity is to be destroyed on exiting
 
     private void sendtoProfile() {
         Intent intent = new Intent(ClassActivity.this, ProfileActivity.class);
@@ -358,16 +429,47 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
         finish();
     }
 
-    // This activity isn't destroyed so the user can return to this page and see the newly added ticket
-    private void sendtoTickets() {
-        Intent intent = new Intent(ClassActivity.this, TicketActivity.class);
+    private void sendtoSettings() {
+        Intent intent;
+        if (status.equals("student")) {
+            intent = new Intent(ClassActivity.this, SettingsActivity.class);
+
+        } else {
+            intent = new Intent(ClassActivity.this, SettingsActivityProfessorProfessor.class);
+
+        }
         startActivity(intent);
     }
 
+    private void sendtoLogin() {
+        mAuth.signOut();
+        Intent intent = new Intent(ClassActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        this.finish();
+        // Checks preferences to determine main screen and acts accordingly
+        if(status.equals("student"))
+        { SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String mPref = sharedPref.getString("home_list", "0");
+            switch (mPref) {
+                case "0":
+                    sendtoHome();
+                    break;
+                case "1":
+                    sendtoFav();
+                    break;
+                case "2":
+                    sendtoTickets();
+                    break;
+            }
+        }
+        else {
+            sendtoHome();
+        }
     }
 
 }

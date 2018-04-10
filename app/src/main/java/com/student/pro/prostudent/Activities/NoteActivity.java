@@ -72,7 +72,7 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
         getSupportActionBar().setTitle(R.string.action_send_note);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         //Database Ref
         mDatabase = FirebaseDatabase.getInstance().getReference("notes");

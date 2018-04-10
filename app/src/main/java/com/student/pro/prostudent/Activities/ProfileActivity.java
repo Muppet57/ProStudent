@@ -5,14 +5,18 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -54,14 +59,14 @@ import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     //Toolbar & Nav
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
     //Variables
     private Uri filePath = null, imageURL = null;
-    private String UserID;
+    private String UserID, currentStatus;
     private static int RESULT_LOAD_IMAGE = 1;
     private static final String TAG = "ProfileLog";
     //Firebase
@@ -81,7 +86,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         //Toolbar & Navbar
         mToolbar = findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
@@ -91,6 +95,25 @@ public class ProfileActivity extends AppCompatActivity {
         mToggle.syncState();
         getSupportActionBar().setTitle(R.string.title_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            currentStatus = intent.getStringExtra("Status").toString();
+        }
+        if (currentStatus.equals("student")) {
+            NavigationView nav = findViewById(R.id.nav_view);
+            Menu menu = nav.getMenu();
+            menu.findItem(R.id.nav_notes).setVisible(false);
+
+        } else {
+            NavigationView nav = findViewById(R.id.nav_view);
+            Menu menu = nav.getMenu();
+            menu.findItem(R.id.nav_tickets).setVisible(false);
+            menu.findItem(R.id.nav_class).setVisible(false);
+        }
+
+
 
         /*
         ----Elements Initialization----
@@ -353,12 +376,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private void sendtoHome() {
-        Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
-        startActivity(intent);
-    }
-
-
     private void getUserData() {
         profile_bar.setVisibility(View.VISIBLE);
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -469,34 +486,116 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    //Click no hamburguer menu
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                sendtoHome();
+                break;
+            case R.id.nav_class:
+                sendtoFav();
+                break;
+            case R.id.nav_notes:
+                sendtoNotes();
+                break;
+            case R.id.nav_tickets:
+                sendtoTickets();
+                break;
+            case R.id.nav_account:
+                sendtoProfile();
+                break;
+            case R.id.nav_settings:
+                sendtoSettings();
+                break;
+            case R.id.nav_logout:
+                sendtoLogin();
+                break;
+
+
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if (mToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    //Retorna o utilizador para o login
-    private void sendtoLogin() {
-        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+    private void sendtoHome() {
+        Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
+        intent.putExtra("Status",currentStatus);
         startActivity(intent);
+        finish();
+    }
+
+    private void sendtoFav() {
+        Intent intent = new Intent(ProfileActivity.this, FavoritesActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void sendtoNotes() {
+        //Send to my notes
     }
 
     private void sendtoTickets() {
-        Intent intent = new Intent(ProfileActivity.this, TicketActivity.class);
+        Intent intent = new Intent(ProfileActivity.this, MyTicketsActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void sendtoProfile() {
+        Intent intent = new Intent(ProfileActivity.this, ProfileActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void sendtoSettings() {
+        Intent intent;
+        if (currentStatus.equals("student")) {
+            intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+
+        } else {
+            intent = new Intent(ProfileActivity.this, SettingsActivityProfessorProfessor.class);
+
+        }
         startActivity(intent);
     }
 
-    private void sendtoClass() {
-        Intent intent = new Intent(ProfileActivity.this, ClassActivity.class);
+    private void sendtoLogin() {
+        mAuth.signOut();
+        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
         startActivity(intent);
+        finish();
     }
+
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        this.finish();
+        // Checks preferences to determine main screen and acts accordingly
+        if(currentStatus.equals("student"))
+        { SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String mPref = sharedPref.getString("home_list", "0");
+            switch (mPref) {
+                case "0":
+                    sendtoHome();
+                    break;
+                case "1":
+                    sendtoFav();
+                    break;
+                case "2":
+                    sendtoTickets();
+                    break;
+            }
+        }
+        else {
+            sendtoHome();
+        }
     }
 }

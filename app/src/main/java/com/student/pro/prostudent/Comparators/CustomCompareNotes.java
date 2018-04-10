@@ -14,6 +14,8 @@ import java.util.Date;
  */
 
 public class CustomCompareNotes implements Comparator<Notes> {
+    private static final String TAG = "notecomparelog";
+
     @Override
     public int compare(Notes notes, Notes t1) {
 
@@ -25,15 +27,29 @@ public class CustomCompareNotes implements Comparator<Notes> {
         try {
             x1 = sdf.parse(notes.getDate().toString());
             x2 = sdf.parse(t1.getDate().toString());
-            Log.d("cnc", "compare: deu");
-            return x1.compareTo(x2);
+
         } catch (ParseException e) {
 
-            e.printStackTrace();
-            Log.d("cnc", "compare: 0");
-            return 0;
-        }
 
+            e.printStackTrace();
+            }
+        float dif = x1.getTime()-x2.getTime();
+        if(dif>0)
+        {
+            Log.d(TAG, "compare: -1");
+            return -1;
+        }
+        if(dif<0){
+            Log.d(TAG, "compare: 1");
+
+            return 1;
+        }
+        else
+        {
+            Log.d(TAG, "compare: 0");
+
+            return 0 ;
+        }
 
     }
 }

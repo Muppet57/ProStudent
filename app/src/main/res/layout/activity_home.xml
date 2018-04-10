@@ -14,16 +14,26 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_class"
+            android:requiresFadingEdge="vertical"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="55dp"
+            android:layout_marginTop="88dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/student_discipline_layout">
-
         </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:id="@+id/empty_view_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:text="You have no Course associated with your account "
+            android:textColor="@color/colorSecondaryLightTransparent"
+            android:textSize="18sp"
+            android:visibility="gone" />
 
     </android.support.constraint.ConstraintLayout>
 

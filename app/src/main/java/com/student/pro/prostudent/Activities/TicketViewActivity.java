@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TicketViewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class TicketViewActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
@@ -43,7 +43,7 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private String UserID, TAG = "TicketViewLog";
-    private String message,ticket_id,ticket_Uid,status,date;
+    private String message, ticket_id, ticket_Uid, status, date, solved;
     private RecyclerView mView;
     private EditText response;
     private TextView title;
@@ -62,6 +62,7 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
             ticket_Uid = intent.getStringExtra("UserID");
             status = intent.getStringExtra("Status");
             date = intent.getStringExtra("Date");
+            solved = intent.getStringExtra("Solved");
         } else {
              /*
               This page needs to inherit information about the discipline selected
@@ -88,40 +89,47 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
         //Elements
         title = findViewById(R.id.title_ticket);
         title.setText(intent.getStringExtra("Title"));
-        response= findViewById(R.id.response_content);
+        response = findViewById(R.id.response_content);
         sendRes = findViewById(R.id.response_send);
 
-        Chat message1 = new Chat(message,date,"student");
+        Chat message1 = new Chat(message, date, "student");
         getChat(message1);
-        sendRes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendResponse();
-                InputMethodManager inputManager = (InputMethodManager)
-                        getSystemService(TicketViewActivity.this.INPUT_METHOD_SERVICE);
+        if (solved.equals("false")) {
+            sendRes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sendResponse();
+                    InputMethodManager inputManager = (InputMethodManager)
+                            getSystemService(TicketViewActivity.this.INPUT_METHOD_SERVICE);
 
-                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
+                    inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
 
-            }
-        });
+                }
+            });
+
+        } else {
+            response.setVisibility(View.GONE);
+            sendRes.setVisibility(View.GONE
+            );
+        }
+
     }
 
-    private void getChat(final Chat message1){
+    private void getChat(final Chat message1) {
         mDB_Ticket.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Chat> messages = new ArrayList<>();
-               messages.add(message1);
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren())
-                {
+                messages.add(message1);
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
 
-                        String content,date,sender;
-                        content = postSnapshot.child("content").getValue().toString();
-                        date = postSnapshot.child("date").getValue().toString();
-                        sender = postSnapshot.child("sender").getValue().toString();
-                        Chat message = new Chat(content,date,sender);
-                        messages.add(message);
+                    String content, date, sender;
+                    content = postSnapshot.child("content").getValue().toString();
+                    date = postSnapshot.child("date").getValue().toString();
+                    sender = postSnapshot.child("sender").getValue().toString();
+                    Chat message = new Chat(content, date, sender);
+                    messages.add(message);
 
                 }
                 initRecycler(messages);
@@ -135,9 +143,9 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
 
     }
 
-    private void initRecycler(ArrayList<Chat> messages){
+    private void initRecycler(ArrayList<Chat> messages) {
         mView = findViewById(R.id.ticket_view_recycler);
-        AdapterChat adapter =new AdapterChat(messages,this,status);
+        AdapterChat adapter = new AdapterChat(messages, this, status);
         mView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setStackFromEnd(true);
@@ -145,19 +153,18 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
 
     }
 
-    private void sendResponse(){
+    private void sendResponse() {
 
         final String[] sender = new String[1];
-        if(!response.getText().toString().isEmpty())
-        {
+        if (!response.getText().toString().isEmpty()) {
             Date currentDate = Calendar.getInstance().getTime();
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
             final String idate = sdf.format(currentDate).toString();
             mDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    sender[0] =dataSnapshot.child("status").getValue().toString();
-                    Chat message = new Chat(response.getText().toString(),idate,sender[0]);
+                    sender[0] = dataSnapshot.child("status").getValue().toString();
+                    Chat message = new Chat(response.getText().toString(), idate, sender[0]);
                     mDB_Ticket.push().setValue(message);
                     response.setText("");
 
@@ -230,34 +237,55 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
     }
 
     private void sendtoHome() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         Intent intent = new Intent(TicketViewActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
     }
 
     private void sendtoFav() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         //send to favorites
     }
 
     private void sendtoNotes() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         //Send to my notes
     }
 
     private void sendtoTickets() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         //Send to my tickets
     }
 
     private void sendtoProfile() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         Intent intent = new Intent(TicketViewActivity.this, ProfileActivity.class);
         startActivity(intent);
     }
 
     private void sendtoSettings() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         Intent intent = new Intent(TicketViewActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
 
     private void sendtoLogin() {
+        //Finishes Class Activity that was left Open
+        Intent intent_finish = new Intent("finish_class");
+        sendBroadcast(intent_finish);
         mAuth.signOut();
         Intent intent = new Intent(TicketViewActivity.this, LoginActivity.class);
         startActivity(intent);

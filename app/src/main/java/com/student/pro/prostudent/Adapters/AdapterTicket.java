@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +36,8 @@ public class AdapterTicket extends RecyclerView.Adapter<AdapterTicket.ViewHolder
     private ArrayList<Tickets> tickets = new ArrayList<>();
     private Context mContext;
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users");
+    private DatabaseReference mDB_tickets = FirebaseDatabase.getInstance().getReference("tickets");
+
 
     public AdapterTicket(ArrayList<Tickets> tickets, Context mContext, String status) {
         this.tickets = tickets;
@@ -72,11 +75,29 @@ public class AdapterTicket extends RecyclerView.Adapter<AdapterTicket.ViewHolder
 
             }
         });
+
         holder.ticket_title.setText(tickets.get(position).getTitle());
+        if(tickets.get(position).getSolved().toString().equals("true"))
+        {
+            holder.ticket_solved.setBackground(mContext.getResources().getDrawable(R.drawable.ic_solved_full));
+        }
+        else if(tickets.get(position).getSolved().toString().equals("false") && status.equals("professor")){
+            holder.ticket_solved.setBackground(mContext.getResources().getDrawable(R.drawable.ic_solved));
+            holder.ticket_solved.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDB_tickets.child(tickets.get(position).getUser_id().toString()).child(tickets.get(position).getTicket_id().toString()).child("solved").setValue("true");
+                    holder.ticket_solved.setClickable(false);
+                }
+            });
+        }
+
+
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent = new Intent(mContext, TicketViewActivity.class);
                 Log.d(TAG, tickets.get(position).getTicket_id());
                 intent.putExtra("TicketID",tickets.get(position).getTicket_id());
@@ -85,6 +106,7 @@ public class AdapterTicket extends RecyclerView.Adapter<AdapterTicket.ViewHolder
                 intent.putExtra("Date",tickets.get(position).getDate());
                 intent.putExtra("Title",tickets.get(position).getTitle());
                 intent.putExtra("Status",status);
+                intent.putExtra("Solved",tickets.get(position).getSolved());
                 mContext.startActivity(intent);
             }
         });
@@ -98,11 +120,13 @@ public class AdapterTicket extends RecyclerView.Adapter<AdapterTicket.ViewHolder
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView ticket_user, ticket_title;
+        Button ticket_solved;
         CircleImageView ticket_Uimage;
         ConstraintLayout parentLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            ticket_solved= itemView.findViewById(R.id.ticket_solved);
             ticket_title = itemView.findViewById(R.id.ticket_title);
             ticket_user = itemView.findViewById(R.id.ticket_user);
             ticket_Uimage = itemView.findViewById(R.id.ticket_Uimage);

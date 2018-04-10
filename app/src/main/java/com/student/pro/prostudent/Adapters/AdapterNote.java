@@ -2,6 +2,8 @@ package com.student.pro.prostudent.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,13 +36,13 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder> {
     private Context mContext;
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("notes_read");
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseUser user= mAuth.getCurrentUser();
-    private String UserID = user.getUid(),status;
+    private FirebaseUser user = mAuth.getCurrentUser();
+    private String UserID = user.getUid(), status;
 
-    public AdapterNote(ArrayList<Notes> notes, Context mContext,String status) {
+    public AdapterNote(ArrayList<Notes> notes, Context mContext, String status) {
         this.notes = notes;
         this.mContext = mContext;
-        this.status=status;
+        this.status = status;
     }
 
     @Override
@@ -49,42 +51,71 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder> {
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
+    private void deleteItem(int position) {
+        Log.d(TAG, "Pre_Note_size = " + String.valueOf(notes.size()));
+        this.notes.remove(position);
+        Log.d(TAG, "Item count = "+ String.valueOf(getItemCount()));
+        Log.d(TAG, "Post_Note_size = " + String.valueOf(notes.size()));
+        notifyItemRemoved(position);
+        notifyDataSetChanged();
+
+
+    }
+
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        final Boolean mPref = sharedPref.getBoolean("notes_read", false);
         final Intent intent = new Intent(mContext, NoteViewActivity.class);
-        intent.putExtra("ID",notes.get(position).getNote_id().toString());
-
+        intent.putExtra("ID", notes.get(position).getNote_id().toString());
         mDatabase.child(notes.get(position).getNote_id()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Pré snapshot = " + String.valueOf(position));
+
                 Boolean flag = false;
-                for(DataSnapshot postSnapshot : dataSnapshot.getChildren())
-                {
-                    if(dataSnapshot.getKey().equals(notes.get(position).getNote_id())) {
-                        if (postSnapshot.getKey().equals(UserID) && postSnapshot.getValue().toString().equals("true")) {
-                            Log.d(TAG, "onDataChange: Entrou");
-                            holder.title.setTextColor(mContext.getResources().getColor(R.color.colorSecondaryDark));
-                            holder.content.setTextColor(mContext.getResources().getColor(R.color.colorSecondaryDarkTransparent));
-                            holder.title.setText(notes.get(position).getTitle());
-                            holder.content.setText(notes.get(position).getContent());
-                            intent.putExtra("Read", "true");
-                            flag = true;
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    if(position<notes.size())
+                    {
+                        if (dataSnapshot.getKey().equals(notes.get(position).getNote_id())) {
+                            if (postSnapshot.getKey().equals(UserID) && postSnapshot.getValue().toString().equals("true")) {
+                                //Ver todas as notas
+                                if (!mPref) {
+                                    holder.title.setTextColor(mContext.getResources().getColor(R.color.colorSecondaryDark));
+                                    holder.content.setTextColor(mContext.getResources().getColor(R.color.colorSecondaryDarkTransparent));
+                                    holder.title.setText(notes.get(position).getTitle());
+                                    holder.content.setText(notes.get(position).getContent());
+                                    intent.putExtra("Read", "true");
+                                    intent.putExtra("Status",status);
+
+                                } else {
+                                    deleteItem(position);
+
+                                }
+                                flag = true;
+                            }
                         }
                     }
 
                 }
-                if(!flag)
-                {
-                    holder.title.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryLight));
-                    holder.content.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryLightTransparent));
-                    holder.title.setText(notes.get(position).getTitle());
-                    holder.content.setText(notes.get(position).getContent());
-                    intent.putExtra("Read","false");
+
+                //Nota por ler
+                if (!flag) {
+                    if(position<notes.size())
+                    {
+
+                        holder.title.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryLight));
+                        holder.content.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryLightTransparent));
+                        holder.title.setText(notes.get(position).getTitle());
+                        holder.content.setText(notes.get(position).getContent());
+                        intent.putExtra("Read", "false");
+                        intent.putExtra("Status",status);
+                    }
+
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 

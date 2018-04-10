@@ -1,8 +1,13 @@
 package com.student.pro.prostudent.Activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +18,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,7 +38,6 @@ import com.student.pro.prostudent.Adapters.SectionedAdapter;
 import com.student.pro.prostudent.Comparators.CustomCompareDiscipline;
 import com.student.pro.prostudent.Objects.Course_Class;
 import com.student.pro.prostudent.Objects.Disciplines;
-import com.student.pro.prostudent.Objects.Favorite;
 import com.student.pro.prostudent.R;
 
 import java.util.ArrayList;
@@ -40,19 +48,39 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-    private DatabaseReference mDatabase, mDB_User, mDB_Professor, mDB_Student;
+    private DatabaseReference mDatabase, mDB_Professor, mDB_Student, mDB_Tickets;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private String UserID, TAG = "Homelog";
+    private String UserID, TAG = "Homelog", mPref = "", currentStatus;
     private RecyclerView mView;
 
+    private TextView emptyHome;
+    private BroadcastReceiver broadcastReceiver;
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        setNavigationViewListener();
 
+        broadcastReceiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context arg0, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals("finish_home")) {
+                    Log.d(TAG, "onReceive: I was deleted" );
+                    finish();
+                }
+            }
+        };
+        HomeActivity.this.registerReceiver(broadcastReceiver, new IntentFilter("finish_home"));
+
+        setNavigationViewListener();
         mToolbar = findViewById(R.id.nav_action);
         setSupportActionBar(mToolbar);
         mDrawerLayout = findViewById(R.id.drawerlayout);
@@ -60,31 +88,45 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         UserID = user.getUid();
-        mDB_User = FirebaseDatabase.getInstance().getReference("users").child(UserID).child("status");
         mDB_Professor = FirebaseDatabase.getInstance().getReference("professors_ucs/" + UserID + "/course");
         mDB_Student = FirebaseDatabase.getInstance().getReference("students_courses");
+        mDB_Tickets = FirebaseDatabase.getInstance().getReference().child("tickets");
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            currentStatus = intent.getStringExtra("Status");
+        }
+        if (currentStatus.equals("student")) {
+            NavigationView nav = findViewById(R.id.nav_view);
+            Menu menu = nav.getMenu();
+            menu.findItem(R.id.nav_notes).setVisible(false);
+
+        } else {
+            NavigationView nav = findViewById(R.id.nav_view);
+            Menu menu = nav.getMenu();
+            menu.findItem(R.id.nav_tickets).setVisible(false);
+            menu.findItem(R.id.nav_class).setVisible(false);
+        }
         getStatus();
+
     }
 
-    //Retrieve User status
-    private void getStatus() {
-        mDB_User.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue().toString().equals("student")) {
-                    getCourseStudent();
-                } else {
-                    getCoursesProfessor();
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+    //Act based on status
+    private void getStatus() {
+        if (TextUtils.equals(currentStatus, "student")) {
+            getCourseStudent();
+            getSupportActionBar().setTitle(R.string.title_home);
+
+        } else {
+            getCoursesProfessor();
+            getSupportActionBar().setTitle(R.string.title_home);
+        }
     }
 
     //Fetch course associated with student
@@ -92,7 +134,15 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mDB_Student.child(UserID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                getClassesStudent(dataSnapshot.child("course_id").getValue().toString());
+                try{
+                    getClassesStudent(dataSnapshot.child("course_id").getValue().toString());
+                }
+                catch (NullPointerException e)
+                {
+                    emptyHome = findViewById(R.id.empty_view_home);
+                    emptyHome.setVisibility(View.VISIBLE);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                }
             }
 
             @Override
@@ -121,7 +171,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     id = postSnapshot.getKey().toString();
                     if (postSnapshot.child("year").getValue().toString().equals("1")) {
                         cnt1++;
-
                     }
                     if (postSnapshot.child("year").getValue().toString().equals("2")) {
                         cnt2++;
@@ -142,12 +191,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     //Start the recycler view for the student
     private void initRecycleStudent(ArrayList<Disciplines> ucs, int cnt1, int cnt2) {
-        Collections.sort(ucs, new CustomCompareDiscipline());
 
         mView = findViewById(R.id.recycler_class);
         AdapterStudent adapter = new AdapterStudent(ucs, this);
-
-        //Criar
         List<SectionedAdapter.Section> sections =
                 new ArrayList<>();
 
@@ -254,149 +300,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    // My Favorites --------------------------------------------------------------------------------
-
-    private void getFav() {
-        DatabaseReference mDB_Fav = FirebaseDatabase.getInstance().getReference("users_fav").child(UserID);
-
-        mDB_Fav.addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                ArrayList<Favorite> favorites = new ArrayList<>();
-
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Favorite favorite = new Favorite(postSnapshot.child("tag").getValue().toString(), postSnapshot.child("id").getValue().toString());
-                    favorites.add(favorite);
-                }
-                getFavCourseStudent(favorites);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-    }
-
-    private void getFavCourseStudent(final ArrayList<Favorite> favorites) {
-        mDB_Student.child(UserID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                getFavClassesStudent(dataSnapshot.child("course_id").getValue().toString(), favorites);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void getFavClassesStudent(String course, final ArrayList<Favorite> favorites) {
-        mDatabase = FirebaseDatabase.getInstance().getReference("courses/course/" + course + "/ucs");
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                int cnt1 = 0, cnt2 = 0, cnt3 = 0;
-                ArrayList<Disciplines> ucs = new ArrayList<Disciplines>();
-
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String name, year, tag, id;
-                    for (int i = 0; i < favorites.size(); i++) {
-                        if (favorites.get(i).getId().equals(postSnapshot.getKey()) && favorites.get(i).getTag().equals(postSnapshot.child("short").getValue().toString())) {
-                            name = postSnapshot.child("name").getValue().toString();
-                            year = postSnapshot.child("year").getValue().toString();
-                            tag = postSnapshot.child("short").getValue().toString();
-                            id = postSnapshot.getKey().toString();
-                            if (postSnapshot.child("year").getValue().toString().equals("1")) {
-                                cnt1++;
-
-                            }
-                            if (postSnapshot.child("year").getValue().toString().equals("2")) {
-                                cnt2++;
-                            }
-                            if (postSnapshot.child("year").getValue().toString().equals("3")) {
-                                cnt3++;
-                            }
-                            Disciplines uc = new Disciplines(name, year, tag, id);
-                            ucs.add(uc);
-                            break;
-                        }
-                    }
-                }
-                initRecycleFavorite(ucs, cnt1, cnt2, cnt3);
-                mDatabase.removeEventListener(this);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void initRecycleFavorite(ArrayList<Disciplines> ucs, int cnt1, int cnt2, int cnt3) {
-        Collections.sort(ucs, new CustomCompareDiscipline());
-
-        mView = findViewById(R.id.recycler_class);
-        AdapterStudent adapter = new AdapterStudent(ucs, this);
-
-        List<SectionedAdapter.Section> sections =
-                new ArrayList<>();
-
-        /*
-        Combinations possible with favorites
-        Creates sections as needed
-         */
-
-        //111
-        if (cnt1 > 0 && cnt2 > 0 && cnt3 > 0) {
-            sections.add(new SectionedAdapter.Section(0, "1st Year"));
-            sections.add(new SectionedAdapter.Section(cnt1, "2nd Year"));
-            sections.add(new SectionedAdapter.Section(cnt2 + cnt1, "3rd Year"));
-        }
-        //110
-        if (cnt1 > 0 && cnt2 > 0 && cnt3 == 0) {
-            sections.add(new SectionedAdapter.Section(0, "1st Year"));
-            sections.add(new SectionedAdapter.Section(cnt1, "2nd Year"));
-        }
-        //101
-        if (cnt1 > 0 && cnt2 == 0 && cnt3 > 0) {
-            sections.add(new SectionedAdapter.Section(0, "1st Year"));
-            sections.add(new SectionedAdapter.Section(cnt1, "3rd Year"));
-        }
-        //100
-        if (cnt1 > 0 && cnt2 == 0 && cnt3 == 0) {
-            sections.add(new SectionedAdapter.Section(0, "1st Year"));
-        }
-        //011
-        if (cnt1 == 0 && cnt2 > 0 && cnt3 > 0) {
-            sections.add(new SectionedAdapter.Section(0, "2nd Year"));
-            sections.add(new SectionedAdapter.Section(cnt2, "3rd Year"));
-        }
-
-        //010
-        if (cnt1 == 0 && cnt2 > 0 && cnt3 == 0) {
-            sections.add(new SectionedAdapter.Section(0, "2nd Year"));
-        }
-        //001
-        if (cnt1 == 0 && cnt2 == 0 && cnt3 > 0) {
-            sections.add(new SectionedAdapter.Section(0, "3rd Year"));
-        }
-
-        SectionedAdapter.Section[] dummy = new SectionedAdapter.Section[sections.size()];
-        SectionedAdapter mSectionedAdapter = new
-                SectionedAdapter(this, R.layout.header_section, R.id.section_header, adapter);
-        mSectionedAdapter.setSections(sections.toArray(dummy));
-
-        mView.setAdapter(mSectionedAdapter);
-        mView.setLayoutManager(new LinearLayoutManager(this));
-    }
 
     private void setNavigationViewListener() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -447,30 +355,44 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void sendtoHome() {
-        Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+        getStatus();
+    }
+
+    private void sendtoFav() {
+        Intent intent = new Intent(HomeActivity.this, FavoritesActivity.class);
         startActivity(intent);
         finish();
     }
 
-    private void sendtoFav() {
-        getFav();
-    }
-
     private void sendtoNotes() {
+        Intent intent = new Intent(HomeActivity.this, MyNotesActivity.class);
+        startActivity(intent);
+        finish();
         //Send to my notes
     }
 
     private void sendtoTickets() {
-        //Send to my tickets
+        Intent intent = new Intent(HomeActivity.this, MyTicketsActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void sendtoProfile() {
         Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+        intent.putExtra("Status",currentStatus);
         startActivity(intent);
+        finish();
     }
 
     private void sendtoSettings() {
-        Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+        Intent intent;
+        if (currentStatus.equals("student")) {
+            intent = new Intent(HomeActivity.this, SettingsActivity.class);
+
+        } else {
+            intent = new Intent(HomeActivity.this, SettingsActivityProfessorProfessor.class);
+
+        }
         startActivity(intent);
     }
 
@@ -484,22 +406,59 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
-        builder.setTitle("Do you want to log out?");
-        builder.setCancelable(false);
-        builder.setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                sendtoLogin();
+        // Checks preferences to determine main screen and acts accordingly
+        if(currentStatus.equals("student"))
+        {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String mPref = sharedPref.getString("home_list", "0");
+            switch (mPref) {
+                case "0":
+                    AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                    builder.setTitle("Do you want to log out?");
+                    builder.setCancelable(false);
+                    builder.setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            sendtoLogin();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                    break;
+                case "1":
+                    sendtoFav();
+                    break;
+                case "2":
+                    sendtoTickets();
+                    break;
             }
-        });
-        builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
+        }
+        else
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+            builder.setTitle("Do you want to log out?");
+            builder.setCancelable(false);
+            builder.setPositiveButton(R.string.action_confirm, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    sendtoLogin();
+                }
+            });
+            builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+        }
+
     }
 }

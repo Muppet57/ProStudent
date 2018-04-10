@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
  */
 
 public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHolder> {
-    private static final String TAG = "AdapterStudent";
+    private static final String TAG = "AdapterStudentLog";
 
     private ArrayList<Disciplines> ucs = new ArrayList<>();
 
@@ -45,7 +46,7 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.student_discipline_layout, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view);
         return holder;
     }
 
@@ -54,36 +55,37 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = mAuth.getCurrentUser();
         final String user_id = user.getUid();
-        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users_fav").child(user_id);
 
+        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("users_fav").child(user_id);
         holder.disc_back.setBackgroundResource(R.drawable.round_button_two_colors);
         holder.name.setText(ucs.get(position).getName().toString());
         holder.tag.setText(ucs.get(position).getTag().toString());
         holder.home_fav.setBackgroundResource(R.drawable.ic_favorite_border);
-        mDatabase.addValueEventListener(new ValueEventListener() {
-
+      mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     for (int i = 0; i < ucs.size(); i++) {
 
                         if (postSnapshot.child("id").getValue().toString().equals(ucs.get(position).getId().toString())
                                 && postSnapshot.child("tag").getValue().toString().equals(ucs.get(position).getTag().toString())
                                 ) {
+                            Log.d(TAG, "Posição holder = " + String.valueOf(position));
+                            Log.d(TAG, "ID Disciplina = " + ucs.get(position).getId());
+                            Log.d(TAG, "Snapshot = "+postSnapshot.child("id").getValue());
+                            Log.d(TAG, "TAG Disciplina = " + ucs.get(position).getTag());
+                            Log.d(TAG, "Snapshot = "+postSnapshot.child("tag").getValue());
+                            Log.d(TAG, "onDataChange: ENTROU");
                             holder.home_fav.setBackgroundResource(R.drawable.ic_favorite_full);
                         }
                     }
-
                 }
+                mDatabase.removeEventListener(this);
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-
-
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,8 +93,10 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
                 Intent intent = new Intent(mContext, ClassActivity.class);
                 intent.putExtra("Discipline", ucs.get(position).getTag().toString());
                 intent.putExtra("ID", ucs.get(position).getId().toString());
-                intent.putExtra("Status","student");
+                intent.putExtra("Status", "student");
                 mContext.startActivity(intent);
+                Intent intent_finish = new Intent("finish_home");
+                mContext.sendBroadcast(intent_finish);
             }
         });
 
@@ -103,10 +107,12 @@ public class AdapterStudent extends RecyclerView.Adapter<AdapterStudent.ViewHold
                 intent.putExtra("Discipline", ucs.get(position).getTag().toString());
                 intent.putExtra("ID", ucs.get(position).getId().toString());
                 mContext.startActivity(intent);
+                Intent intent_finish = new Intent("finish_home");
+                mContext.sendBroadcast(intent_finish);
             }
         });
 
-        holder.home_fav.setOnClickListener(new View.OnClickListener() {
+      holder.home_fav.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {

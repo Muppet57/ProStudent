@@ -7,13 +7,13 @@
         android:title="@string/title_home" />
     <item
         android:id="@+id/nav_class"
-        android:title="@string/title_class" />
+        android:title="@string/title_favorites" />
     <item
         android:id="@+id/nav_notes"
         android:title="@string/title_my_notes" />
     <item
         android:id="@+id/nav_tickets"
-        android:title="@string/action_send_ticket" />
+        android:title="@string/title_my_tickets" />
     <item
         android:id="@+id/nav_account"
         android:icon="@drawable/ic_action_profile"

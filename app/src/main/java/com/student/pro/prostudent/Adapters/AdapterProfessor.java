@@ -121,6 +121,8 @@ public class AdapterProfessor extends RecyclerView.Adapter<AdapterProfessor.View
                 intent.putExtra("ID", ucs.get(position).getId().toString());
                 intent.putExtra("Status","professor");
                 mContext.startActivity(intent);
+                Intent intent_finish = new Intent("finish_home");
+                mContext.sendBroadcast(intent_finish);
             }
         });
 
@@ -131,6 +133,8 @@ public class AdapterProfessor extends RecyclerView.Adapter<AdapterProfessor.View
                 intent.putExtra("Discipline", ucs.get(position).getTag().toString());
                 intent.putExtra("ID", ucs.get(position).getId().toString());
                 mContext.startActivity(intent);
+                Intent intent_finish = new Intent("finish_home");
+                mContext.sendBroadcast(intent_finish);
             }
         });
     }
