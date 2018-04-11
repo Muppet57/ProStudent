@@ -16,68 +16,31 @@
             android:id="@+id/note_add"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginStart="224dp"
             android:background="@drawable/ic_action_add"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView3"
+            app:layout_constraintEnd_toEndOf="@+id/notes_parent"
             app:layout_constraintTop_toTopOf="@+id/textView3" />
 
         <Button
             android:id="@+id/ticket_add"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginStart="207dp"
             android:background="@drawable/ic_action_add"
             app:layout_constraintBottom_toBottomOf="@+id/textView10"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView10"
+            app:layout_constraintEnd_toEndOf="@+id/tickets_parent"
             app:layout_constraintTop_toTopOf="@+id/textView10" />
 
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="72dp"
+            android:layout_marginTop="95dp"
             android:fontFamily="@font/montserrat_bold"
             android:text="@string/label_notes"
             android:textColor="@color/colorPrimaryLight"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="@+id/notes_parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="@string/label_tickets"
-            android:textColor="@color/colorPrimaryLight"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/tickets_parent"
-            app:layout_constraintStart_toStartOf="@+id/tickets_parent" />
-
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:background="@color/colorPrimaryLight"
-            android:paddingBottom="2dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="2dp"
-            android:scaleType="fitXY"
-            android:src="@android:drawable/divider_horizontal_dark"
-            app:layout_constraintBottom_toTopOf="@+id/textView10"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/notes_parent" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/notes_parent"
@@ -92,10 +55,10 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/notes_recyler"
-                android:requiresFadingEdge="vertical"
-
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+
+                android:layout_height="match_parent"
+                android:requiresFadingEdge="vertical" />
 
             <TextView
                 android:id="@+id/empty_view"
@@ -109,24 +72,57 @@
                 android:visibility="gone" />
         </android.support.constraint.ConstraintLayout>
 
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:background="@color/colorPrimaryLight"
+            android:paddingBottom="2dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="2dp"
+            android:scaleType="fitXY"
+            android:src="@android:drawable/divider_horizontal_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/notes_parent" />
+
+        <TextView
+            android:id="@+id/textView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="@string/label_tickets"
+            android:textColor="@color/colorPrimaryLight"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="@+id/tickets_parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+
         <android.support.constraint.ConstraintLayout
             android:id="@+id/tickets_parent"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="39dp"
             android:layout_marginEnd="40dp"
             android:layout_marginStart="40dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ticket_add">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/tickets_recycler"
-                android:requiresFadingEdge="vertical"
-
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+
+                android:layout_height="match_parent"
+                android:requiresFadingEdge="vertical" />
 
             <TextView
                 android:id="@+id/empty_view_tickets"

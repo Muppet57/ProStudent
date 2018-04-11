@@ -50,11 +50,11 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.TicketActivity"
-            android:label="@string/title_new_ticket"
+            android:label="@string/action_send_ticket"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Activities.ClassActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Activities.NoteActivity"
             android:label="@string/action_send_note"
@@ -79,7 +79,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.SettingsActivityProfessorProfessor"
+            android:name=".Activities.SettingsActivityProfessor"
             android:label="@string/title_activity_settings"></activity>
     </application>
 

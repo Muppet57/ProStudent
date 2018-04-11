@@ -36,6 +36,7 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+        currentStatus[0] = "";
 
         if (user != null) {
             UserID = user.getUid();
@@ -46,37 +47,71 @@ public class SplashScreen extends AppCompatActivity {
             flag = false;
         }
 
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
+        final AlphaAnimation alphaAnimation = new AlphaAnimation(0.0f, 1.0f);
         alphaAnimation.setDuration(1000);
-        alphaAnimation.setRepeatCount(3);
+        alphaAnimation.setRepeatCount(15);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
         findViewById(R.id.text_splash).startAnimation(alphaAnimation);
 
         alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                //TODO: Run when animation start
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                //TODO: Run when animation end
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-                //TODO: Run when animation repeat
             }
         });
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (flag) {
-                    sendtoHome();
-                } else {
-                   sendtoLogin();
+                //User token not found
+                if (!flag) {
+                    Log.d("SPLASHLOG", "NO TOKEN");
+
+                    sendtoLogin();
                 }
+                //Current status is still unknown
+                else if (currentStatus[0].equals("")) {
+                    Log.d("SPLASHLOG", "NO STATUS");
+                    //Repeats request
+                    if (user != null) {
+                        UserID = user.getUid();
+                        mDB_User = FirebaseDatabase.getInstance().getReference("users").child(UserID).child("status");
+                        getStatus();
+                        flag = true;
+                    } else {
+                        flag = false;
+                    }
+                    //Wait longer for status fetch
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Log.d("SPLASHLOG", "WAIT LONGER");
+
+                            if (flag) {
+                                sendtoHome();
+                            } else {
+                                sendtoLogin();
+                            }
+                        }
+                    }, 8000);
+                }
+
+                //User Token found
+                else if (flag) {
+                    Log.d("SPLASHLOG", "FOUND TOKEN");
+
+                    sendtoHome();
+                }
+
+
             }
         }, 3000);
     }
@@ -108,9 +143,10 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void sendtoHome() {
-        Intent intent=null;
+        Intent intent = null;
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String mPref = sharedPref.getString("home_list", "0");
+
         if (currentStatus[0].equals("student")) {
             switch (mPref) {
                 case "0":
@@ -129,9 +165,7 @@ public class SplashScreen extends AppCompatActivity {
             intent.putExtra("Status", currentStatus[0].toString());
             startActivity(intent);
             finish();
-        }
-        else
-        {
+        } else if (currentStatus[0].equals("professor")) {
             intent = new Intent(SplashScreen.this, HomeActivity.class);
             intent.putExtra("Status", currentStatus[0].toString());
             startActivity(intent);

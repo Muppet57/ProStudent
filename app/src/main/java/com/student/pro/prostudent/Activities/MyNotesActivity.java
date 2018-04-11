@@ -68,8 +68,16 @@ public class MyNotesActivity extends AppCompatActivity implements NavigationView
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(R.string.label_tickets);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView) child;
+                break;
+            }
+        }
+        toolbarTitle.setText(R.string.title_my_notes);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();

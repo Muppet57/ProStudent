@@ -87,6 +87,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
@@ -121,12 +122,22 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private void getStatus() {
         if (TextUtils.equals(currentStatus, "student")) {
             getCourseStudent();
-            getSupportActionBar().setTitle(R.string.title_home);
 
         } else {
             getCoursesProfessor();
-            getSupportActionBar().setTitle(R.string.title_home);
         }
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+
+            // assuming that the title is the first instance of TextView
+            // you can also check if the title string matches
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView)child;
+                break;
+            }
+        }
+        toolbarTitle.setText(R.string.title_home);
     }
 
     //Fetch course associated with student
@@ -191,6 +202,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     //Start the recycler view for the student
     private void initRecycleStudent(ArrayList<Disciplines> ucs, int cnt1, int cnt2) {
+        Collections.sort(ucs, new CustomCompareDiscipline());
 
         mView = findViewById(R.id.recycler_class);
         AdapterStudent adapter = new AdapterStudent(ucs, this);
@@ -307,9 +319,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    @Override
+
+   @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        //getMenuInflater().inflate(R.menu.navigation_menu, menu);
         return true;
     }
 
@@ -368,7 +381,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(HomeActivity.this, MyNotesActivity.class);
         startActivity(intent);
         finish();
-        //Send to my notes
     }
 
     private void sendtoTickets() {
@@ -390,7 +402,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             intent = new Intent(HomeActivity.this, SettingsActivity.class);
 
         } else {
-            intent = new Intent(HomeActivity.this, SettingsActivityProfessorProfessor.class);
+            intent = new Intent(HomeActivity.this, SettingsActivityProfessor.class);
 
         }
         startActivity(intent);

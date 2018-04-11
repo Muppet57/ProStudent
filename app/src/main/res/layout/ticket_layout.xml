@@ -17,7 +17,7 @@
             android:id="@+id/ticket_solved"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="13dp"
             android:background="@drawable/ic_solved"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

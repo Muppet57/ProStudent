@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -71,7 +73,16 @@ public class NoteActivity extends AppCompatActivity implements NavigationView.On
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(R.string.action_send_note);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView) child;
+                break;
+            }
+        }
+        toolbarTitle.setText(R.string.label_notes);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         //Database Ref

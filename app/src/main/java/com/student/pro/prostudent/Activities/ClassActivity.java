@@ -39,7 +39,6 @@ import com.student.pro.prostudent.Objects.Tickets;
 import com.student.pro.prostudent.R;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class ClassActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -116,7 +115,16 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(discipline);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView) child;
+                break;
+            }
+        }
+        toolbarTitle.setText(discipline);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (status.equals("student")) {
@@ -261,9 +269,8 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Tickets> tickets = new ArrayList<>();
-
                 for (DataSnapshot postsnapshot : dataSnapshot.getChildren()) {
-                    String ititle, icontent, iuser_id, iprivate, idate, id_disc, tag_disc, iurl, ticket_id,isolved;
+                    String ititle, icontent, iuser_id, iprivate, idate, id_disc, tag_disc, iurl, ticket_id, isolved;
                     for (DataSnapshot postpostsnap : postsnapshot.getChildren())
                         if (status.equals("professor")) {
                             if (disc_key.equals(postpostsnap.child("id_disc").getValue().toString()) &&
@@ -278,7 +285,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                                 iurl = postpostsnap.child("url").getValue().toString();
                                 isolved = postpostsnap.child("solved").getValue().toString();
                                 Tickets ticket = new Tickets(ititle, icontent, iprivate,
-                                        iuser_id, id_disc, tag_disc, idate, iurl,isolved);
+                                        iuser_id, id_disc, tag_disc, idate, iurl, isolved);
                                 ticket.setTicket_id(postpostsnap.getKey());
                                 tickets.add(ticket);
                             }
@@ -296,11 +303,11 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                                     iurl = postpostsnap.child("url").getValue().toString();
                                     isolved = postpostsnap.child("solved").getValue().toString();
                                     Tickets ticket = new Tickets(ititle, icontent, iprivate,
-                                            iuser_id, id_disc, tag_disc, idate, iurl,isolved);
+                                            iuser_id, id_disc, tag_disc, idate, iurl, isolved);
                                     ticket.setTicket_id(postpostsnap.getKey());
                                     tickets.add(ticket);
                                 }
-                            } else if (postpostsnap.child("user_id").getValue().toString().equals(user_id) && postpostsnap.child("sprivate").getValue().toString().equals("true") ) {
+                            } else if (postpostsnap.child("user_id").getValue().toString().equals(user_id) && postpostsnap.child("sprivate").getValue().toString().equals("true")) {
                                 if (disc_key.equals(postpostsnap.child("id_disc").getValue().toString()) &&
                                         discipline.equals(postpostsnap.child("tag_disc").getValue().toString())) {
                                     ititle = postpostsnap.child("title").getValue().toString();
@@ -313,13 +320,37 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                                     iurl = postpostsnap.child("url").getValue().toString();
                                     isolved = postpostsnap.child("solved").getValue().toString();
                                     Tickets ticket = new Tickets(ititle, icontent, iprivate,
-                                            iuser_id, id_disc, tag_disc, idate, iurl,isolved);
+                                            iuser_id, id_disc, tag_disc, idate, iurl, isolved);
                                     ticket.setTicket_id(postpostsnap.getKey());
                                     tickets.add(ticket);
                                 }
                             }
                         }
 
+                }
+                if(status.equals("student"))
+                {
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ClassActivity.this);
+                    final Boolean mPref = sharedPref.getBoolean("tickets_solved", false);
+                    for (int i = 0; i < tickets.size(); i++) {
+                        if (mPref && tickets.get(i).getSolved().toString().equals("false") && !tickets.get(i).getUser_id().toString().equals(user_id)) {
+                            Log.d(TAG, "Removed Ticket");
+                            tickets.remove(i);
+                            i=i-1;
+                        }
+                    }
+                }
+                else
+                {
+                    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ClassActivity.this);
+                    final Boolean mPref = sharedPref.getBoolean("tickets_solved_professor", false);
+                    for (int i = 0; i < tickets.size(); i++) {
+                        
+                        if (mPref && tickets.get(i).getSolved().toString().equals("true")) {
+                            tickets.remove(i);
+                            i=i-1;
+                        }
+                    }
                 }
                 initRecyclerTicket(tickets);
             }
@@ -338,13 +369,19 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
         adapter = new AdapterTicket(tickets, this, status);
 
-        if (adapter.getItemCount() == 0) {
+        if (adapter.getItemCount() == 0)
+
+        {
             empty.setVisibility(View.VISIBLE);
-        } else {
+        } else
+
+        {
             empty.setVisibility(View.GONE);
         }
         mRecyclerTickets.setAdapter(adapter);
-        mRecyclerTickets.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerTickets.setLayoutManager(new
+
+                LinearLayoutManager(this));
     }
 
 
@@ -356,7 +393,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        //getMenuInflater().inflate(R.menu.navigation_menu, menu);
         return true;
     }
 
@@ -402,7 +439,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
     private void sendtoHome() {
         Intent intent = new Intent(ClassActivity.this, HomeActivity.class);
-        intent.putExtra("Status",status);
+        intent.putExtra("Status", status);
         startActivity(intent);
         finish();
     }
@@ -414,8 +451,9 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     }
 
     private void sendtoNotes() {
-        //Send to my notes
-    }
+        Intent intent = new Intent(ClassActivity.this, MyNotesActivity.class);
+        startActivity(intent);
+        finish();    }
 
     private void sendtoTickets() {
         Intent intent = new Intent(ClassActivity.this, MyTicketsActivity.class);
@@ -425,6 +463,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
 
     private void sendtoProfile() {
         Intent intent = new Intent(ClassActivity.this, ProfileActivity.class);
+        intent.putExtra("Status", status);
         startActivity(intent);
         finish();
     }
@@ -435,7 +474,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
             intent = new Intent(ClassActivity.this, SettingsActivity.class);
 
         } else {
-            intent = new Intent(ClassActivity.this, SettingsActivityProfessorProfessor.class);
+            intent = new Intent(ClassActivity.this, SettingsActivityProfessor.class);
 
         }
         startActivity(intent);
@@ -452,8 +491,8 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
     @Override
     public void onBackPressed() {
         // Checks preferences to determine main screen and acts accordingly
-        if(status.equals("student"))
-        { SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (status.equals("student")) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String mPref = sharedPref.getString("home_list", "0");
             switch (mPref) {
                 case "0":
@@ -466,8 +505,7 @@ public class ClassActivity extends AppCompatActivity implements NavigationView.O
                     sendtoTickets();
                     break;
             }
-        }
-        else {
+        } else {
             sendtoHome();
         }
     }

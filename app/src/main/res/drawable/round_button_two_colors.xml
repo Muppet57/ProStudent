@@ -12,7 +12,7 @@
     </item>
 
 
-    <item android:right="75dip">
+    <item android:right="60dip">
         <shape android:shape="rectangle"  >
             <corners android:radius="10dp"
                android:topRightRadius="0dp"

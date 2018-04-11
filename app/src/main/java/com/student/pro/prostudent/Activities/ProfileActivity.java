@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,7 +92,16 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(R.string.title_profile);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView) child;
+                break;
+            }
+        }
+        toolbarTitle.setText(R.string.title_profile);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
@@ -239,6 +247,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
+                            profile_bar.setVisibility(View.GONE);
+
                         }
                     });
                     builder.show();
@@ -337,6 +347,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                             public void onComplete(@NonNull Task<Void> task) {
                                 //Failed
                                 if (!task.isSuccessful()) {
+                                    profile_bar.setVisibility(View.INVISIBLE);
                                     progressDialog.dismiss();
                                     Toast.makeText(ProfileActivity.this, R.string.email_failed, Toast.LENGTH_SHORT).show();
                                 }
@@ -394,7 +405,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
+                profile_bar.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -529,7 +540,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     private void sendtoHome() {
         Intent intent = new Intent(ProfileActivity.this, HomeActivity.class);
-        intent.putExtra("Status",currentStatus);
+        intent.putExtra("Status", currentStatus);
         startActivity(intent);
         finish();
     }
@@ -552,6 +563,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     private void sendtoProfile() {
         Intent intent = new Intent(ProfileActivity.this, ProfileActivity.class);
+        intent.putExtra("Status", currentStatus);
         startActivity(intent);
         finish();
     }
@@ -562,7 +574,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             intent = new Intent(ProfileActivity.this, SettingsActivity.class);
 
         } else {
-            intent = new Intent(ProfileActivity.this, SettingsActivityProfessorProfessor.class);
+            intent = new Intent(ProfileActivity.this, SettingsActivityProfessor.class);
 
         }
         startActivity(intent);
@@ -579,8 +591,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     @Override
     public void onBackPressed() {
         // Checks preferences to determine main screen and acts accordingly
-        if(currentStatus.equals("student"))
-        { SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if (currentStatus.equals("student")) {
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             String mPref = sharedPref.getString("home_list", "0");
             switch (mPref) {
                 case "0":
@@ -593,8 +605,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                     sendtoTickets();
                     break;
             }
-        }
-        else {
+        } else {
             sendtoHome();
         }
     }

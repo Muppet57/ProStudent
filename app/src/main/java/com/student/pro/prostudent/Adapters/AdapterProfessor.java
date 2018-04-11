@@ -30,7 +30,7 @@ import java.util.ArrayList;
  */
 
 public class AdapterProfessor extends RecyclerView.Adapter<AdapterProfessor.ViewHolder> {
-    private static final String TAG = "AdapterStudentLog";
+    private static final String TAG = "AdapterProfessorLog";
 
     private ArrayList<Disciplines> ucs = new ArrayList<>();
 
@@ -54,45 +54,24 @@ public class AdapterProfessor extends RecyclerView.Adapter<AdapterProfessor.View
         final FirebaseUser user = mAuth.getCurrentUser();
         final String user_id = user.getUid();
         final DatabaseReference mDB_tickets = FirebaseDatabase.getInstance().getReference("tickets");
-        final DatabaseReference mDB_solved = FirebaseDatabase.getInstance().getReference("tickets");
         final int[] total_tickets = {0};
         final int[] solved_tickets = {0};
-
         mDB_tickets.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot postSnapshot : dataSnapshot.getChildren())
-                {
-                    for(DataSnapshot postpostSnap : postSnapshot.getChildren())
-                    {
-
-                        if(postpostSnap.child("id_disc").getValue().toString().equals(ucs.get(position).getId()) &&
-                                postpostSnap.child("tag_disc").getValue().toString().equals(ucs.get(position).getTag())   )
-                        {
-                            total_tickets[0]++;
-                            Log.d(TAG, String.valueOf(total_tickets[0]));
-                        }
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        mDB_solved.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren())
                 {
                     for (DataSnapshot postpostSnap : postSnapshot.getChildren())
                     {
-                        if(postpostSnap.child("id_disc").toString().equals(ucs.get(position).getId())&&
-                                postpostSnap.child("tag_disc").toString().equals(ucs.get(position).getTag()) && postpostSnap.hasChild("response"))
+                        if(postpostSnap.child("id_disc").getValue().toString().equals(ucs.get(position).getId()) &&
+                                postpostSnap.child("tag_disc").getValue().toString().equals(ucs.get(position).getTag())   )
                         {
+                            total_tickets[0]++;
+                        }
+                        if(postpostSnap.child("id_disc").getValue().toString().equals(ucs.get(position).getId())&&
+                                postpostSnap.child("tag_disc").getValue().toString().equals(ucs.get(position).getTag()) && postpostSnap.child("solved").getValue().toString().equals("true"))
+                        {
+                            Log.d(TAG, "ENTREI");
                             solved_tickets[0]++;
                         }
                     }
@@ -133,8 +112,7 @@ public class AdapterProfessor extends RecyclerView.Adapter<AdapterProfessor.View
                 intent.putExtra("Discipline", ucs.get(position).getTag().toString());
                 intent.putExtra("ID", ucs.get(position).getId().toString());
                 mContext.startActivity(intent);
-                Intent intent_finish = new Intent("finish_home");
-                mContext.sendBroadcast(intent_finish);
+
             }
         });
     }

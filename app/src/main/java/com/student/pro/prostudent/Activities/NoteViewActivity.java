@@ -71,8 +71,16 @@ public class NoteViewActivity extends AppCompatActivity implements NavigationVie
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(R.string.view_note);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView) child;
+                break;
+            }
+        }
+        toolbarTitle.setText(R.string.label_notes);          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Database Ref
         mDatabase = FirebaseDatabase.getInstance().getReference("notes_read").child(note_key);

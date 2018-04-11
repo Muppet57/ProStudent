@@ -1,13 +1,23 @@
 package com.student.pro.prostudent.Activities;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -22,7 +32,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +47,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.student.pro.prostudent.Objects.Tickets;
 import com.student.pro.prostudent.R;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,7 +60,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private Toolbar mToolbar;
-   //Elements
+    //Elements
     private ImageView attach;
     private EditText title, content;
     private Button sendBut;
@@ -61,6 +76,8 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
     private String UserID, discipline, disc_key, ticket_key;
     private Uri filePath = null, imageURL = null;
     private static int RESULT_LOAD_IMAGE = 2;
+    private static final int CAMERA_REQUEST = 3;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +107,16 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        getSupportActionBar().setTitle(R.string.action_send_ticket);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView) child;
+                break;
+            }
+        }
+        toolbarTitle.setText(R.string.action_send_ticket);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Instances
@@ -116,17 +142,55 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
         attach.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chooseImage();
+                startDialog();
             }
         });
     }
 
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        String mystring = this.getResources().getString(R.string.select_img).toString();
-        startActivityForResult(Intent.createChooser(intent, mystring), RESULT_LOAD_IMAGE);
+    private String photoFileName = "photo.jpg";
+    private File photoFile;
+
+    private void startDialog() {
+        final CharSequence[] items = {"Gallery", "Camera"};
+        AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(TicketActivity.this);
+        myAlertDialog.setTitle("Choose an Option");
+
+        myAlertDialog.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                switch (i) {
+                    case 0:
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        String mystring = TicketActivity.this.getResources().getString(R.string.select_img).toString();
+                        startActivityForResult(Intent.createChooser(intent, mystring), RESULT_LOAD_IMAGE);
+                        break;
+                    case 1:
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            //Checks for reading permission
+                            if (ContextCompat.checkSelfPermission(TicketActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                //Asks for permission
+                                ActivityCompat.requestPermissions(TicketActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                            } else {
+                                Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(intent2, CAMERA_REQUEST);
+                            }
+
+                        }
+                        //If build is lower the permission is asked in the play store
+                        else {
+                            Intent intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            startActivityForResult(intent2, CAMERA_REQUEST);
+                        }
+
+                }
+
+            }
+        });
+
+        myAlertDialog.show();
     }
 
     @Override
@@ -143,7 +207,21 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            //Updates profile picture on screen
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            filePath = getImageUri(TicketActivity.this, bitmap);
+            attach.setImageBitmap(bitmap);
+
         }
+    }
+
+    public Uri getImageUri(Context mContext, Bitmap bitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(mContext.getContentResolver(), bitmap, "image", null);
+        return Uri.parse(path);
     }
 
     //Upload to FireStorage
@@ -176,7 +254,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(TicketActivity.this, R.string.upload_failed +" - "+ e.getMessage(),
+                            Toast.makeText(TicketActivity.this, R.string.upload_failed + " - " + e.getMessage(),
                                     Toast.LENGTH_SHORT).show();
                         }
                     })
@@ -212,7 +290,7 @@ public class TicketActivity extends AppCompatActivity implements NavigationView.
             } else {
                 iprivate = "false";
             }
-            Tickets ticket = new Tickets(ititle, icontent, iprivate, UserID, disc_key, discipline, idate, iurl,"false");
+            Tickets ticket = new Tickets(ititle, icontent, iprivate, UserID, disc_key, discipline, idate, iurl, "false");
             mDatabase.child(UserID).push().setValue(ticket);
             ticket_bar.setVisibility(View.INVISIBLE);
             finish();

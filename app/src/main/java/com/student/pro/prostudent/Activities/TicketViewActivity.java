@@ -78,6 +78,16 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        TextView toolbarTitle = null;
+        for (int i = 0; i < mToolbar.getChildCount(); ++i) {
+            View child = mToolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                toolbarTitle = (TextView) child;
+                break;
+            }
+        }
+        toolbarTitle.setText(R.string.label_tickets);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //User
         mAuth = FirebaseAuth.getInstance();

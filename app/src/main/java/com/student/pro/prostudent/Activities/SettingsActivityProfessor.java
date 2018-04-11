@@ -29,7 +29,7 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivityProfessorProfessor extends PreferenceActivityProfessor {
+public class SettingsActivityProfessor extends PreferenceActivityProfessor {
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -127,34 +127,13 @@ public class SettingsActivityProfessorProfessor extends PreferenceActivityProfes
 
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
-                || NotesPreferenceFragment.class.getName().equals(fragmentName)
                 || TicketsPreferenceFragment.class.getName().equals(fragmentName);
 
     }
 
 
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class NotesPreferenceFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_notes_professor);
-            setHasOptionsMenu(true);
-            bindPreferenceSummaryToValue(findPreference("notes_date_list"));
 
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivityProfessorProfessor.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-    }
 
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -170,7 +149,7 @@ public class SettingsActivityProfessorProfessor extends PreferenceActivityProfes
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivityProfessorProfessor.class));
+                startActivity(new Intent(getActivity(), SettingsActivityProfessor.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);

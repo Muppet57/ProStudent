@@ -52,14 +52,9 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder> {
         return holder;
     }
     private void deleteItem(int position) {
-        Log.d(TAG, "Pre_Note_size = " + String.valueOf(notes.size()));
         this.notes.remove(position);
-        Log.d(TAG, "Item count = "+ String.valueOf(getItemCount()));
-        Log.d(TAG, "Post_Note_size = " + String.valueOf(notes.size()));
         notifyItemRemoved(position);
         notifyDataSetChanged();
-
-
     }
 
 
@@ -105,7 +100,6 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder> {
                 if (!flag) {
                     if(position<notes.size())
                     {
-
                         holder.title.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryLight));
                         holder.content.setTextColor(mContext.getResources().getColor(R.color.colorPrimaryLightTransparent));
                         holder.title.setText(notes.get(position).getTitle());
