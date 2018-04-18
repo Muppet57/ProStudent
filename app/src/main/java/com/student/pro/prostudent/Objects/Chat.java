@@ -1,7 +1,7 @@
 package com.student.pro.prostudent.Objects;
 
 public class Chat {
-    String content,date,sender;
+    String content,date,sender,url;
 
     public Chat(String content, String date, String sender) {
         this.content = content;
@@ -10,6 +10,14 @@ public class Chat {
     }
 
     public Chat() {
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setContent(String content) {

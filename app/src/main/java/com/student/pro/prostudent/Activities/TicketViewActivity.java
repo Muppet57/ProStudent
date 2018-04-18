@@ -45,7 +45,7 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private String UserID, TAG = "TicketViewLog";
-    private String message, ticket_id, ticket_Uid, status, date, solved;
+    private String message, ticket_id, ticket_Uid, status, date, solved,url;
     private RecyclerView mView;
     private EditText response;
     private TextView title;
@@ -65,6 +65,7 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
             status = intent.getStringExtra("Status");
             date = intent.getStringExtra("Date");
             solved = intent.getStringExtra("Solved");
+            url = intent.getStringExtra("Url");
         } else {
              /*
               This page needs to inherit information about the discipline selected
@@ -168,10 +169,11 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Chat> messages = new ArrayList<>();
+                message1.setUrl(url);
                 messages.add(message1);
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
 
-                    String content, date, sender;
+                    String content, date, sender,url;
                     content = postSnapshot.child("content").getValue().toString();
                     date = postSnapshot.child("date").getValue().toString();
                     sender = postSnapshot.child("sender").getValue().toString();

@@ -7,9 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.student.pro.prostudent.Objects.Chat;
 import com.student.pro.prostudent.R;
 
@@ -39,6 +41,16 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ViewHolder> {
         Log.d(TAG, "onBindViewHolder:");
         if (status.equals("professor")) {
             if (messages.get(position).getSender().toString().equals("student")) {
+                if(position==0 && !messages.get(0).getUrl().toString().equals("empty"))
+                {
+
+                    Picasso.get()
+                            .load(messages.get(position).getUrl().toString())
+                            .placeholder(R.drawable.default_icon)
+                            .error(R.drawable.default_icon)
+                            .into(holder.image_right);
+                    holder.image_right.setVisibility(View.VISIBLE);
+                }
                 holder.leftLayout.setVisibility(LinearLayout.VISIBLE);
                 holder.leftMessage.setText(messages.get(position).getContent().toString());
                 holder.rightLayout.setVisibility(LinearLayout.GONE);
@@ -61,6 +73,15 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ViewHolder> {
                 String[] arraydate = messages.get(position).getDate().toString().split(" ");
                 holder.date_received.setText(arraydate[0] + " - " + arraydate[1]);
             } else {
+                if(position==0 && !messages.get(0).getUrl().toString().equals("empty"))
+                {
+                    Picasso.get()
+                            .load(messages.get(position).getUrl().toString())
+                            .placeholder(R.drawable.default_icon)
+                            .error(R.drawable.default_icon)
+                            .into(holder.image_right);
+                    holder.image_right.setVisibility(View.VISIBLE);
+                }
                 holder.rightLayout.setVisibility(LinearLayout.VISIBLE);
                 holder.rightMessage.setText(messages.get(position).getContent().toString());
                 holder.leftLayout.setVisibility(LinearLayout.GONE);
@@ -106,12 +127,16 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.ViewHolder> {
 
         ConstraintLayout rightLayout;
 
+        ImageView image_left,image_right;
+
         TextView leftMessage, date_send, date_received;
 
         TextView rightMessage;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            image_left = itemView.findViewById(R.id.image_left);
+            image_right = itemView.findViewById(R.id.image_right);
             leftLayout = itemView.findViewById(R.id.chat_left_msg_layout);
             rightLayout = itemView.findViewById(R.id.chat_right_msg_layout);
             leftMessage = itemView.findViewById(R.id.chat_left_msg_text_view);

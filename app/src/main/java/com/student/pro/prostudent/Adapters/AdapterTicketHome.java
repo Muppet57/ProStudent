@@ -85,6 +85,7 @@ public class AdapterTicketHome extends RecyclerView.Adapter<AdapterTicketHome.Vi
                 intent.putExtra("Date",tickets.get(position).getDate());
                 intent.putExtra("Title",tickets.get(position).getTitle());
                 intent.putExtra("Status",status);
+                intent.putExtra("Url",tickets.get(position).getUrl());
                 mContext.startActivity(intent);
             }
         });

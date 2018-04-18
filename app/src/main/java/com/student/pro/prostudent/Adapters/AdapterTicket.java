@@ -113,6 +113,8 @@ public class AdapterTicket extends RecyclerView.Adapter<AdapterTicket.ViewHolder
                 intent.putExtra("Title", tickets.get(position).getTitle());
                 intent.putExtra("Status", status);
                 intent.putExtra("Solved", tickets.get(position).getSolved());
+                intent.putExtra("Url",tickets.get(position).getUrl());
+
                 mContext.startActivity(intent);
             }
         });
