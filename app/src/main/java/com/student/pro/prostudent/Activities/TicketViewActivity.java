@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 import com.student.pro.prostudent.Adapters.AdapterChat;
 import com.student.pro.prostudent.Objects.Chat;
 import com.student.pro.prostudent.R;
@@ -101,6 +103,7 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
         title.setText(intent.getStringExtra("Title"));
         response = findViewById(R.id.response_content);
         sendRes = findViewById(R.id.response_send);
+        getUserData();
 
         Chat message1 = new Chat(message, date, "student");
         getChat(message1);
@@ -124,6 +127,40 @@ public class TicketViewActivity extends AppCompatActivity implements NavigationV
             );
         }
 
+    }
+    private DatabaseReference mDB_user;
+    private void getUserData() {
+        mDB_user = FirebaseDatabase.getInstance().getReference("users");
+
+        mDB_user.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String username, email, name, surname, url;
+                username = dataSnapshot.child(UserID).child("username").getValue().toString();
+
+                url = dataSnapshot.child(UserID).child("url").getValue().toString();
+                updateUI(username, url);
+
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
+        });
+    }
+
+    private void updateUI(String username, String url) {
+        NavigationView nav = findViewById(R.id.nav_view);
+
+        View hView =  nav.getHeaderView(0);
+        TextView nav_user = hView.findViewById(R.id.header_user);
+        ImageView profile_img = hView.findViewById(R.id.setup_image_header);
+        nav_user.setText(username);
+        Picasso.get()
+                .load(url)
+                .placeholder(R.drawable.default_icon)
+                .error(R.drawable.default_icon)
+                .into(profile_img);
     }
 
     private void getChat(final Chat message1) {

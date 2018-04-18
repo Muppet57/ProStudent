@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -146,7 +147,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         nameB = findViewById(R.id.but_name);
         surnameB = findViewById(R.id.but_surname);
         save_settings = findViewById(R.id.profile_save);
-        setupImage = findViewById(R.id.setup_image);
+        setupImage = findViewById(R.id.setup_image_header);
         profile_bar = findViewById(R.id.profile_bar);
 
         //Instances
@@ -422,6 +423,18 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 .placeholder(R.drawable.default_icon)
                 .error(R.drawable.default_icon)
                 .into(setupImage);
+
+        NavigationView nav = findViewById(R.id.nav_view);
+
+        View hView =  nav.getHeaderView(0);
+        TextView nav_user = hView.findViewById(R.id.header_user);
+        ImageView profile_img = hView.findViewById(R.id.setup_image_header);
+        nav_user.setText(username);
+        Picasso.get()
+                .load(url)
+                .placeholder(R.drawable.default_icon)
+                .error(R.drawable.default_icon)
+                .into(profile_img);
         profile_bar.setVisibility(View.INVISIBLE);
         Toast.makeText(ProfileActivity.this, R.string.load_profile, Toast.LENGTH_SHORT).show();
     }

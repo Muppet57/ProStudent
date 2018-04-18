@@ -23,7 +23,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,6 +34,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 import com.student.pro.prostudent.Adapters.AdapterProfessor;
 import com.student.pro.prostudent.Adapters.AdapterStudent;
 import com.student.pro.prostudent.Adapters.SectionedAdapter;
@@ -90,13 +93,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         UserID = user.getUid();
         mDB_Professor = FirebaseDatabase.getInstance().getReference("professors_ucs/" + UserID + "/course");
         mDB_Student = FirebaseDatabase.getInstance().getReference("students_courses");
         mDB_Tickets = FirebaseDatabase.getInstance().getReference().child("tickets");
-
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -113,8 +116,42 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             menu.findItem(R.id.nav_tickets).setVisible(false);
             menu.findItem(R.id.nav_class).setVisible(false);
         }
+        getUserData();
         getStatus();
+    }
+    private DatabaseReference mDB_user;
+    private void getUserData() {
+        mDB_user = FirebaseDatabase.getInstance().getReference("users");
 
+        mDB_user.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                String username, email, name, surname, url;
+                username = dataSnapshot.child(UserID).child("username").getValue().toString();
+
+                url = dataSnapshot.child(UserID).child("url").getValue().toString();
+                updateUI(username, url);
+
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+            }
+        });
+    }
+
+    private void updateUI(String username, String url) {
+        NavigationView nav = findViewById(R.id.nav_view);
+
+        View hView =  nav.getHeaderView(0);
+        TextView nav_user = hView.findViewById(R.id.header_user);
+        ImageView profile_img = hView.findViewById(R.id.setup_image_header);
+        nav_user.setText(username);
+        Picasso.get()
+                .load(url)
+                .placeholder(R.drawable.default_icon)
+                .error(R.drawable.default_icon)
+                .into(profile_img);
     }
 
 
