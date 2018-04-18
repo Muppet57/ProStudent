@@ -9,12 +9,12 @@
 
     <header
         android:fragment="com.student.pro.prostudent.Activities.SettingsActivity$NotesPreferenceFragment"
-        android:icon="@drawable/ic_notifications_black_24dp"
+        android:icon="@drawable/ic_bluenote"
         android:title="@string/pref_header_notes" />
 
     <header
         android:fragment="com.student.pro.prostudent.Activities.SettingsActivity$TicketsPreferenceFragment"
-        android:icon="@drawable/ic_sync_black_24dp"
+        android:icon="@drawable/ic_blueticket"
         android:title="@string/pref_header_tickets" />
 
 </preference-headers>
