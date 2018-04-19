@@ -7,6 +7,16 @@
     android:background="@color/colorPrimaryLight"
     tools:context=".Activities.SplashScreen">
 
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="160dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo_final" />
+
     <TextView
         android:id="@+id/text_splash"
         android:layout_width="wrap_content"
